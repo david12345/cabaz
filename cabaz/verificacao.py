@@ -25,7 +25,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
-LOJAS_NOMES = {"continente": "Continente", "pingodoce": "Pingo Doce", "auchan": "Auchan"}
+from .lojas import NOMES as LOJAS_NOMES
 
 PADRAO = {"cobertura_minima": 0.90, "variacao_suspeita": 0.30}
 
@@ -37,6 +37,7 @@ class Resultado:
     esperados: int
     recolhidos: int
     criticos: list[str] = field(default_factory=list)
+    avisos: list[str] = field(default_factory=list)
     suspeitos: list[dict] = field(default_factory=list)
     trocas: list[dict] = field(default_factory=list)
 
@@ -52,11 +53,15 @@ def carregar_limites(caminho: Path = RAIZ / "cabaz.toml") -> dict:
 
 
 def verificar(historico: list[dict], produtos: list[dict], lojas: list[str],
-              limites: dict | None = None, data: str | None = None) -> Resultado:
+              limites: dict | None = None, data: str | None = None,
+              parciais: set[str] | frozenset = frozenset()) -> Resultado:
+    """`parciais`: lojas sem catálogo completo online (ex.: Lidl). Contam para as
+    variações, mas não para a cobertura; sem nenhum preço geram só um aviso."""
     lim = {**PADRAO, **(limites or {})}
     datas = sorted({l["data"] for l in historico})
+    completas = [l for l in lojas if l not in parciais]
     if not datas:
-        return Resultado(data or "", None, len(produtos) * len(lojas), 0,
+        return Resultado(data or "", None, len(produtos) * len(completas), 0,
                          criticos=["Histórico vazio: nenhum preço recolhido."])
     data = data or datas[-1]
     anteriores = [d for d in datas if d < data]
@@ -66,7 +71,8 @@ def verificar(historico: list[dict], produtos: list[dict], lojas: list[str],
     hoje = {(l["produto"], l["loja"]): l for l in historico if l["data"] == data and l["produto"] in nomes}
     ontem = {(l["produto"], l["loja"]): l for l in historico if l["data"] == anterior} if anterior else {}
 
-    r = Resultado(data, anterior, len(nomes) * len(lojas), len(hoje))
+    r = Resultado(data, anterior, len(nomes) * len(completas),
+                  sum(1 for (_, lj) in hoje if lj not in parciais))
 
     # --- críticos
     if r.cobertura < lim["cobertura_minima"]:
@@ -75,7 +81,10 @@ def verificar(historico: list[dict], produtos: list[dict], lojas: list[str],
             f"(mínimo {lim['cobertura_minima']:.0%}).")
     for loja in lojas:
         n = sum(1 for (_, lj) in hoje if lj == loja)
-        if n == 0:
+        if n == 0 and loja in parciais:
+            r.avisos.append(f"{LOJAS_NOMES.get(loja, loja)} (loja parcial): nenhum preço recolhido. "
+                            "Pode ser só uma semana sem produtos do cabaz em destaque, ou uma mudança no site.")
+        elif n == 0:
             r.criticos.append(f"{LOJAS_NOMES.get(loja, loja)}: nenhum preço recolhido "
                               "(site em baixo, bloqueio ou mudança no site).")
 
@@ -115,6 +124,8 @@ def markdown(r: Resultado, limites: dict | None = None) -> str:
          + (f", comparada com **{r.anterior}**." if r.anterior else "."), ""]
     if r.criticos:
         L += ["### ❌ Problemas críticos", ""] + [f"- {c}" for c in r.criticos] + [""]
+    if r.avisos:
+        L += ["### ℹ️ Avisos", ""] + [f"- {a}" for a in r.avisos] + [""]
     if r.suspeitos:
         L += [f"### ⚠️ Variações suspeitas (mais de {lim['variacao_suspeita']:.0%})", "",
               "| Produto | Loja | Antes | Agora | Var. | Produto escolhido |", "|---|---|---:|---:|---:|---|"]
@@ -133,14 +144,14 @@ def markdown(r: Resultado, limites: dict | None = None) -> str:
             L.append(f"- **{t['produto']}** @ {t['loja']}: {t['nome_antes']} → {t['nome_depois']} "
                      f"({_eur(t['antes'])} → {_eur(t['depois'])}/{t['unidade']}, {_pct(t['variacao'])})")
         L.append("")
-    if not (r.criticos or r.suspeitos or r.trocas):
+    if not (r.criticos or r.avisos or r.suspeitos or r.trocas):
         L.append("✅ Sem problemas.")
     return "\n".join(L).rstrip() + "\n"
 
 
 def main(argv: list[str] | None = None) -> int:
     from .agente import carregar_cabaz, ler_historico
-    from .lojas import LOJAS
+    from .lojas import LOJAS, PARCIAIS
 
     ap = argparse.ArgumentParser(description="Verifica a qualidade da última recolha.")
     ap.add_argument("--saida", type=Path, help="pasta onde escrever issue.md e resultado.json")
@@ -148,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
     a = ap.parse_args(argv)
 
     limites = carregar_limites()
-    r = verificar(ler_historico(), carregar_cabaz(), list(LOJAS), limites, a.data)
+    r = verificar(ler_historico(), carregar_cabaz(), list(LOJAS), limites, a.data, PARCIAIS)
     texto = markdown(r, limites)
     print(texto)
 
@@ -161,7 +172,7 @@ def main(argv: list[str] | None = None) -> int:
         with open(gh, "a", encoding="utf-8") as f:
             f.write(f"data={r.data}\n")
             f.write(f"critico={'true' if r.criticos else 'false'}\n")
-            f.write(f"suspeito={'true' if r.suspeitos else 'false'}\n")
+            f.write(f"suspeito={'true' if (r.suspeitos or r.avisos) else 'false'}\n")
     return 0
 
 

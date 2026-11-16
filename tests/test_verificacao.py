@@ -76,3 +76,24 @@ class TestVerificacao(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestLojaParcial(unittest.TestCase):
+    LOJAS4 = LOJAS + ["lidl"]
+
+    def test_parcial_nao_conta_para_cobertura(self):
+        poucos = [linha("2026-11-17", "P0", "lidl", 1.0)]
+        r = verificar(dia("2026-11-17") + poucos, PRODUTOS, self.LOJAS4, parciais={"lidl"})
+        self.assertEqual((r.recolhidos, r.esperados, r.criticos, r.avisos), (30, 30, [], []))
+
+    def test_parcial_sem_precos_e_so_aviso(self):
+        r = verificar(dia("2026-11-17"), PRODUTOS, self.LOJAS4, parciais={"lidl"})
+        self.assertEqual(r.criticos, [])
+        self.assertEqual(len(r.avisos), 1)
+        self.assertIn("Lidl", r.avisos[0])
+
+    def test_parcial_entra_nas_variacoes(self):
+        ontem = dia("2026-11-16") + [linha("2026-11-16", "P0", "lidl", 1.0)]
+        hoje = dia("2026-11-17") + [linha("2026-11-17", "P0", "lidl", 2.0)]
+        r = verificar(ontem + hoje, PRODUTOS, self.LOJAS4, parciais={"lidl"})
+        self.assertEqual([s["loja"] for s in r.suspeitos], ["Lidl"])

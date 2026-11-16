@@ -9,7 +9,7 @@
   color-scheme: light;
   --bg: #f6f5f2; --surface: #fcfcfb; --border: #e3e1dc; --grid: #ebe9e4;
   --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #7a7974;
-  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --best: #0b0b0b;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --best: #0b0b0b;
   --up: #c6382f; --down: #0f7a3a; --promo-bg: #fff1d6; --promo-ink: #7a4b00;
   --hl: #eef4fc;
 }
@@ -18,7 +18,7 @@
     color-scheme: dark;
     --bg: #121211; --surface: #1a1a19; --border: #2e2e2c; --grid: #262624;
     --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #8f8e86;
-    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --best: #f0efec;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --best: #f0efec;
     --up: #f0716a; --down: #3fbf6f; --promo-bg: #3a2c10; --promo-ink: #f3c46b;
     --hl: #1d2836;
   }
@@ -27,7 +27,7 @@
   color-scheme: dark;
   --bg: #121211; --surface: #1a1a19; --border: #2e2e2c; --grid: #262624;
   --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #8f8e86;
-  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --best: #f0efec;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --best: #f0efec;
   --up: #f0716a; --down: #3fbf6f; --promo-bg: #3a2c10; --promo-ink: #f3c46b;
   --hl: #1d2836;
 }
@@ -68,6 +68,13 @@ td.min { background: var(--hl); font-weight: 650; }
 .warn li { color: var(--ink-2); font-size: 14px; }
 .head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .toggle { font: inherit; font-size: 13px; background: none; border: 1px solid var(--border); color: var(--ink-2); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+select { font: inherit; font-size: 14px; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; max-width: 100%; }
+button.prod { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; border-bottom: 1px dotted var(--ink-3); }
+button.prod:hover { color: var(--s1); }
+.tip .row span:last-child { padding-left: 8px; }
+.tip small { display: block; color: var(--ink-3); max-width: 280px; white-space: normal; margin: -2px 0 4px 14px; }
+.escolhas { margin-top: 12px; }
+.escolhas th:nth-child(2), .escolhas td:nth-child(2) { text-align: left; white-space: normal; color: var(--ink-2); min-width: 220px; }
 @media (max-width: 560px) { .big { font-size: 32px; } .hero { grid-template-columns: 1fr 1fr; } .hero > :first-child { grid-column: 1 / -1; } }
 </style>
 </head>
@@ -81,15 +88,23 @@ td.min { background: var(--hl); font-weight: 650; }
   <section class="card">
     <div class="head"><h2>Evolução do custo do cabaz</h2><button class="toggle" id="vista" type="button">Ver tabela</button></div>
     <div class="legend" id="legend"></div>
-    <div class="chart" id="chart"><div class="tip" id="tip"></div></div>
+    <div class="chart" id="chart"><div class="tip"></div></div>
     <div id="tabtot" hidden></div>
-    <p class="note">Soma do preço por kg/L de cada produto (ovos: dúzia). O total de uma loja só é mostrado nos dias em que tem todos os produtos.</p>
+    <p class="note">Soma do preço por kg/L de cada produto (ovos: dúzia). O total de uma loja só é mostrado nos dias em que tem todos os produtos. O Lidl fica de fora dos totais por só ter online os produtos em destaque.</p>
   </section>
 
   <section class="card">
     <h2>Preços de hoje</h2>
     <div class="tablewrap"><table id="tab"></table></div>
-    <p class="note">Preço por kg/L/dúzia da opção mais barata em cada loja. Destacado = mais barato. Passe o rato sobre um preço para ver o produto.</p>
+    <p class="note">Preço por kg/L/dúzia da opção mais barata em cada loja. Destacado = mais barato. Passe o rato sobre um preço para ver o produto; clique no nome para ver a evolução.</p>
+  </section>
+
+  <section class="card" id="evo">
+    <div class="head"><h2>Evolução por produto</h2><select id="selprod" aria-label="Produto"></select></div>
+    <div class="legend" id="legend2"></div>
+    <div class="chart" id="chart2"><div class="tip"></div></div>
+    <div class="tablewrap escolhas"><table id="esc"></table></div>
+    <p class="note">Preço por kg/L/dúzia da opção mais barata em cada loja, em cada dia. Linha tracejada = melhor preço entre Continente, Pingo Doce e Auchan. O Lidl só tem preço online nos dias em que o produto está em destaque. Passe o rato sobre o gráfico para ver o produto escolhido em cada loja.</p>
   </section>
 
   <section class="card warn" id="alertas" hidden><h2>⚠️ Alertas da verificação</h2><ul></ul>
@@ -99,7 +114,7 @@ td.min { background: var(--hl); font-weight: 650; }
 </main>
 <script>
 const D = /*__DADOS__*/null;
-const COR = ["var(--s1)", "var(--s2)", "var(--s3)"];
+const COR = { continente: "var(--s1)", pingodoce: "var(--s2)", auchan: "var(--s3)", lidl: "var(--s4)" };
 const eur = v => v == null ? "—" : v.toLocaleString("pt-PT", { style: "currency", currency: "EUR" });
 const dataPT = s => new Date(s + "T12:00:00").toLocaleDateString("pt-PT", { day: "numeric", month: "short", year: "numeric" });
 const pct = p => {
@@ -109,6 +124,7 @@ const pct = p => {
   return `<span class="${c}">${s} ${(p > 0 ? "+" : "") + p.toFixed(1).replace(".", ",")}%</span>`;
 };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const completas = D.lojas.filter(l => !l.parcial);
 
 document.getElementById("sub").textContent =
   `${D.produtos.length} produtos essenciais em ${D.lojas.map(l => l.nome).join(", ")} · atualizado a ${dataPT(D.hoje)} · ${D.datas.length} dia(s) de histórico`;
@@ -118,75 +134,118 @@ const hero = document.getElementById("hero");
 hero.innerHTML = `<div><div class="lbl">Cabaz ao melhor preço hoje</div><div class="big">${eur(D.melhor.at(-1))}</div></div>` +
   Object.entries(D.variacoes).map(([k, v]) => `<div class="stat"><div class="lbl">vs ${k}</div><div class="v">${pct(v)}</div></div>`).join("");
 
-// --- séries do gráfico
-const series = [
-  ...D.lojas.map((l, i) => ({ nome: l.nome, cor: COR[i], vals: l.totais })),
-  { nome: "Melhor preço", cor: "var(--best)", vals: D.melhor, dash: true },
-];
-document.getElementById("legend").innerHTML = series.map(s =>
+const legenda = (el, series) => el.innerHTML = series.map(s =>
   `<span><i class="${s.dash ? "dash" : ""}" style="background:${s.cor}"></i>${esc(s.nome)}</span>`).join("");
 
-function desenhar() {
-  const box = document.getElementById("chart");
-  const W = Math.max(320, box.clientWidth), H = Math.round(Math.min(340, Math.max(220, W * 0.42)));
+/* Gráfico de linhas com eixo único, rótulos diretos, pontos e tooltip com cruz.
+   series: [{nome, cor, vals[], dash?, extra?(i) -> texto para o tooltip}] */
+function grafico(box, series, aria, unidade = "") {
+  const W = Math.max(300, box.clientWidth), H = Math.round(Math.min(340, Math.max(220, W * 0.42)));
   const m = { t: 12, r: W < 520 ? 12 : 96, b: 28, l: 56 };
   const todos = series.flatMap(s => s.vals).filter(v => v != null);
+  box.querySelectorAll("svg, .vazio").forEach(e => e.remove());
+  if (!todos.length) { box.insertAdjacentHTML("afterbegin", '<p class="note vazio">Sem dados.</p>'); return; }
   let lo = Math.min(...todos), hi = Math.max(...todos);
-  const pad = Math.max((hi - lo) * 0.15, hi * 0.01, 0.5); lo -= pad; hi += pad;
+  const pad = Math.max((hi - lo) * 0.15, hi * 0.03, 0.05); lo = Math.max(0, lo - pad); hi += pad;
   const n = D.datas.length;
   const x = i => m.l + (n === 1 ? (W - m.l - m.r) / 2 : i * (W - m.l - m.r) / (n - 1));
   const y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
-  const ticks = [];
   const passo = (() => { const r = (hi - lo) / 5, p = 10 ** Math.floor(Math.log10(r)); return [1, 2, 2.5, 5, 10].map(k => k * p).find(k => k >= r); })();
-  for (let v = Math.ceil(lo / passo) * passo; v <= hi; v += passo) ticks.push(v);
-  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução do custo do cabaz por loja">`;
-  for (const t of ticks) svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--grid)"/>` +
-    `<text x="${m.l - 8}" y="${y(t) + 4}" text-anchor="end" font-size="12" fill="var(--ink-3)">${t.toFixed(passo < 1 ? 1 : 0)} €</text>`;
+  const dec = passo < 0.1 ? 2 : passo < 1 ? 1 : 0;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(aria)}">`;
+  for (let v = Math.ceil(lo / passo) * passo; v <= hi; v += passo)
+    svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/>` +
+      `<text x="${m.l - 8}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="var(--ink-3)">${v.toFixed(dec).replace(".", ",")} €</text>`;
   const nx = Math.max(1, Math.ceil(n / Math.floor((W - m.l - m.r) / 90)));
   D.datas.forEach((d, i) => { if (i % nx === 0 || i === n - 1) svg += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="12" fill="var(--ink-3)">${new Date(d + "T12:00").toLocaleDateString("pt-PT", { day: "numeric", month: "short" })}</text>`; });
   const fins = [];
-  for (const s of series) {
+  for (const s of [...series].sort((a, b) => !!b.dash - !!a.dash)) { // tracejado por baixo
     let path = "", on = false;
     s.vals.forEach((v, i) => { if (v == null) { on = false; return; } path += (on ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1); on = true; });
     svg += `<path d="${path}" fill="none" stroke="${s.cor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" ${s.dash ? 'stroke-dasharray="5 4"' : ""}/>`;
+    // pontos: em todas as datas se houver poucas ou falhas (séries esparsas como o Lidl); senão só o último
+    const esparsa = s.vals.some(v => v == null);
     const last = s.vals.findLastIndex(v => v != null);
-    if (last >= 0) { svg += `<circle cx="${x(last)}" cy="${y(s.vals[last])}" r="4" fill="${s.cor}" stroke="var(--surface)" stroke-width="2"/>`; fins.push({ s, y: y(s.vals[last]), x: x(last) }); }
+    s.vals.forEach((v, i) => {
+      if (v == null || s.dash || !(esparsa || n <= 31 || i === last)) return;
+      svg += `<circle cx="${x(i)}" cy="${y(v)}" r="${i === last ? 4 : 3}" fill="${s.cor}" stroke="var(--surface)" stroke-width="2"/>`;
+    });
+    if (last >= 0) fins.push({ s, y: y(s.vals[last]), x: x(last) });
   }
   if (m.r > 50) { // rótulos diretos no fim das linhas, sem sobreposição
     fins.sort((a, b) => a.y - b.y);
     for (let i = 1; i < fins.length; i++) if (fins[i].y - fins[i - 1].y < 15) fins[i].y = fins[i - 1].y + 15;
     for (const f of fins) svg += `<text x="${f.x + 10}" y="${f.y + 4}" font-size="12" fill="var(--ink-2)">${esc(f.s.nome)}</text>`;
   }
-  svg += `<line id="cross" y1="${m.t}" y2="${H - m.b}" stroke="var(--ink-3)" stroke-width="1" visibility="hidden"/>`;
-  svg += `<rect x="${m.l - 10}" y="0" width="${W - m.l - m.r + 20}" height="${H}" fill="transparent" id="hit"/></svg>`;
-  box.querySelectorAll("svg").forEach(e => e.remove());
+  svg += `<line class="cross" y1="${m.t}" y2="${H - m.b}" stroke="var(--ink-3)" stroke-width="1" visibility="hidden"/>`;
+  svg += `<rect class="hit" x="${m.l - 10}" y="0" width="${W - m.l - m.r + 20}" height="${H}" fill="transparent"/></svg>`;
   box.insertAdjacentHTML("afterbegin", svg);
-  const hit = box.querySelector("#hit"), cross = box.querySelector("#cross"), tip = document.getElementById("tip");
-  const mostrar = ev => {
+  const hit = box.querySelector(".hit"), cross = box.querySelector(".cross"), tip = box.querySelector(".tip");
+  hit.addEventListener("pointermove", ev => {
     const r = box.querySelector("svg").getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width;
     const i = n === 1 ? 0 : Math.max(0, Math.min(n - 1, Math.round((px - m.l) / ((W - m.l - m.r) / (n - 1)))));
     cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility", "visible");
-    tip.innerHTML = `<b>${dataPT(D.datas[i])}</b>` + series.map(s => `<div class="row" style="--c:${s.cor}"><span>${esc(s.nome)}</span><span>${eur(s.vals[i])}</span></div>`).join("");
+    tip.innerHTML = `<b>${dataPT(D.datas[i])}</b>` + series.map(s =>
+      `<div class="row" style="--c:${s.cor}"><span>${esc(s.nome)}</span><span>${eur(s.vals[i])}${s.vals[i] != null ? unidade : ""}</span></div>` +
+      (s.extra && s.vals[i] != null ? `<small>${esc(s.extra(i))}</small>` : "")).join("");
     tip.style.display = "block";
     const left = x(i) * r.width / W;
-    tip.style.left = Math.min(left + 12, r.width - tip.offsetWidth) + "px";
+    tip.style.left = Math.max(0, Math.min(left + 12, r.width - tip.offsetWidth)) + "px";
     tip.style.top = "8px";
-  };
-  hit.addEventListener("pointermove", mostrar);
+  });
   hit.addEventListener("pointerleave", () => { tip.style.display = "none"; cross.setAttribute("visibility", "hidden"); });
 }
-desenhar();
-new ResizeObserver(() => desenhar()).observe(document.getElementById("chart"));
 
-// --- vista em tabela dos totais
-document.getElementById("tabtot").innerHTML = `<div class="tablewrap"><table><tr><th>Data</th>${series.map(s => `<th>${esc(s.nome)}</th>`).join("")}</tr>` +
-  D.datas.map((d, i) => `<tr><td>${dataPT(d)}</td>${series.map(s => `<td>${eur(s.vals[i])}</td>`).join("")}</tr>`).reverse().join("") + "</table></div>";
+// --- evolução do cabaz
+const seriesCabaz = [
+  ...completas.map(l => ({ nome: l.nome, cor: COR[l.id], vals: l.totais })),
+  { nome: "Melhor preço", cor: "var(--best)", vals: D.melhor, dash: true },
+];
+legenda(document.getElementById("legend"), seriesCabaz);
+const boxCabaz = document.getElementById("chart");
+const desenhar = () => grafico(boxCabaz, seriesCabaz, "Evolução do custo do cabaz por loja");
+desenhar();
+new ResizeObserver(desenhar).observe(boxCabaz);
+
+document.getElementById("tabtot").innerHTML = `<div class="tablewrap"><table><tr><th>Data</th>${seriesCabaz.map(s => `<th>${esc(s.nome)}</th>`).join("")}</tr>` +
+  D.datas.map((d, i) => `<tr><td>${dataPT(d)}</td>${seriesCabaz.map(s => `<td>${eur(s.vals[i])}</td>`).join("")}</tr>`).reverse().join("") + "</table></div>";
 document.getElementById("vista").addEventListener("click", e => {
-  const t = document.getElementById("tabtot"), c = document.getElementById("chart"), l = document.getElementById("legend");
-  const tabela = t.hidden; t.hidden = !tabela; c.hidden = tabela; l.hidden = tabela;
+  const t = document.getElementById("tabtot"), l = document.getElementById("legend");
+  const tabela = t.hidden; t.hidden = !tabela; boxCabaz.hidden = tabela; l.hidden = tabela;
   e.target.textContent = tabela ? "Ver gráfico" : "Ver tabela";
   if (!tabela) desenhar();
 });
+
+// --- evolução por produto
+const sel = document.getElementById("selprod"), boxProd = document.getElementById("chart2");
+sel.innerHTML = D.produtos.map((p, i) => `<option value="${i}">${esc(p.nome)}</option>`).join("");
+const escolhaEm = (lista, i) => { let n = null; for (const [k, nome] of lista || []) { if (k <= i) n = nome; else break; } return n; };
+let atual = 0;
+function mostrarProduto(i) {
+  atual = i; sel.value = i;
+  const p = D.produtos[i];
+  const series = [
+    ...D.lojas.map(l => ({ nome: l.nome, cor: COR[l.id], vals: p.hist[l.id] || [], extra: k => escolhaEm(p.escolhas[l.id], k) })),
+    { nome: "Melhor preço", cor: "var(--best)", vals: p.serie, dash: true },
+  ];
+  legenda(document.getElementById("legend2"), series);
+  grafico(boxProd, series, `Evolução do preço de ${p.nome} por loja`, `/${p.unidade}`);
+  // tabela: produto escolhido hoje e variação desde o início/primeiro preço conhecido
+  document.getElementById("esc").innerHTML = `<tr><th>Loja</th><th>Produto escolhido (última recolha)</th><th>Agora</th><th>Mín.</th><th>Máx.</th><th>Desde o início</th></tr>` +
+    D.lojas.map(l => {
+      const v = (p.hist[l.id] || []).map((a, k) => [k, a]).filter(([, a]) => a != null);
+      if (!v.length) return `<tr><td>${esc(l.nome)}</td><td class="flat">sem preço</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>`;
+      const vals = v.map(([, a]) => a), ult = v.at(-1);
+      const nome = escolhaEm(p.escolhas[l.id], ult[0]);
+      const quando = ult[0] === D.datas.length - 1 ? "" : ` <span class="u">(${dataPT(D.datas[ult[0]])})</span>`;
+      return `<tr><td>${esc(l.nome)}</td><td>${esc(nome || "")}${quando}</td><td>${eur(ult[1])}</td><td>${eur(Math.min(...vals))}</td><td>${eur(Math.max(...vals))}</td><td>${v.length > 1 ? pct((ult[1] / vals[0] - 1) * 100) : pct(null)}</td></tr>`;
+    }).join("");
+  try { history.replaceState(null, "", "#" + encodeURIComponent(p.nome)); } catch (e) {}
+}
+sel.addEventListener("change", () => mostrarProduto(+sel.value));
+new ResizeObserver(() => mostrarProduto(atual)).observe(boxProd);
+const inicial = D.produtos.findIndex(p => "#" + encodeURIComponent(p.nome) === location.hash);
+mostrarProduto(inicial >= 0 ? inicial : 0);
 
 // --- tabela de produtos
 const spark = vals => {
@@ -202,7 +261,7 @@ tab.innerHTML = `<tr><th>Produto</th>${D.lojas.map(l => `<th>${esc(l.nome)}</th>
     const custos = D.lojas.map(l => p.lojas[l.id]?.custo).filter(v => v != null);
     const mn = Math.min(...custos);
     const s = p.serie, prev = s.length > 1 ? s.at(-2) : null;
-    return `<tr><td>${esc(p.nome)} <span class="u">/${esc(p.unidade)}</span></td>` +
+    return `<tr><td><button type="button" class="prod" data-i="${D.produtos.indexOf(p)}">${esc(p.nome)}</button> <span class="u">/${esc(p.unidade)}</span></td>` +
       D.lojas.map(l => {
         const o = p.lojas[l.id];
         if (!o) return `<td class="flat">—</td>`;
@@ -211,6 +270,12 @@ tab.innerHTML = `<tr><th>Produto</th>${D.lojas.map(l => `<th>${esc(l.nome)}</th>
       }).join("") +
       `<td>${prev != null && s.at(-1) != null ? pct((s.at(-1) / prev - 1) * 100) : pct(null)}</td><td>${spark(s)}</td></tr>`;
   }).join("");
+
+tab.addEventListener("click", e => {
+  const b = e.target.closest("button.prod"); if (!b) return;
+  mostrarProduto(+b.dataset.i);
+  document.getElementById("evo").scrollIntoView({ behavior: "smooth", block: "start" });
+});
 
 if ((D.alertas || []).length) {
   const a = document.getElementById("alertas"); a.hidden = false;

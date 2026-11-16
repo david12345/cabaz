@@ -28,7 +28,7 @@ unidade = "L"
 nome = "Ovos (classe M/L)"
 procura = "ovos"
 incluir = ["ovos"]
-excluir = ["classe s", "chocolate", "codorniz", "pascoa", "liquid", "clara", "gema", "massa", "bio", "kinder"]
+excluir = ["classe s", "12 s", "chocolate", "codorniz", "pascoa", "liquid", "clara", "gema", "massa", "bio", "kinder"]
 unidade = "un"
 
 [[produto]]
