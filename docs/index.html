@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cabaz de Alimentos</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2; --surface: #fcfcfb; --border: #e3e1dc; --grid: #ebe9e4;
+  --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #7a7974;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --best: #0b0b0b;
+  --up: #c6382f; --down: #0f7a3a; --promo-bg: #fff1d6; --promo-ink: #7a4b00;
+  --hl: #eef4fc;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --border: #2e2e2c; --grid: #262624;
+    --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #8f8e86;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --best: #f0efec;
+    --up: #f0716a; --down: #3fbf6f; --promo-bg: #3a2c10; --promo-ink: #f3c46b;
+    --hl: #1d2836;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --border: #2e2e2c; --grid: #262624;
+  --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #8f8e86;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --best: #f0efec;
+  --up: #f0716a; --down: #3fbf6f; --promo-bg: #3a2c10; --promo-ink: #f3c46b;
+  --hl: #1d2836;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1040px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 17px; margin: 0 0 12px; }
+.sub { color: var(--ink-2); margin: 0 0 24px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+.hero { display: grid; grid-template-columns: minmax(200px, 1.3fr) repeat(auto-fit, minmax(120px, 1fr)); gap: 20px; align-items: end; }
+.big { font-size: 40px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.lbl { color: var(--ink-2); font-size: 13px; }
+.stat .v { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--ink-3); }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--ink-2); margin-bottom: 8px; }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.legend i.dash { background: repeating-linear-gradient(90deg, var(--best) 0 4px, transparent 4px 7px) !important; }
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,.12); display: none; white-space: nowrap; z-index: 2; }
+.tip b { display: block; margin-bottom: 4px; }
+.tip .row { display: flex; justify-content: space-between; gap: 16px; }
+.tip .row span:first-child::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin-right: 6px; }
+.tablewrap { overflow-x: auto; margin: 0 -20px; padding: 0 20px; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+th { font-size: 12px; color: var(--ink-2); font-weight: 600; position: sticky; top: 0; background: var(--surface); }
+th:first-child, td:first-child { text-align: left; white-space: normal; min-width: 170px; }
+td .u { color: var(--ink-3); font-size: 12px; }
+td a { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--ink-3); }
+td.min { background: var(--hl); font-weight: 650; }
+.tag { font-size: 11px; background: var(--promo-bg); color: var(--promo-ink); border-radius: 4px; padding: 1px 5px; margin-left: 4px; }
+.spark { width: 90px; height: 24px; vertical-align: middle; }
+.note { color: var(--ink-3); font-size: 13px; margin-top: 10px; }
+.warn li { color: var(--ink-2); font-size: 14px; }
+.head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.toggle { font: inherit; font-size: 13px; background: none; border: 1px solid var(--border); color: var(--ink-2); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+@media (max-width: 560px) { .big { font-size: 32px; } .hero { grid-template-columns: 1fr 1fr; } .hero > :first-child { grid-column: 1 / -1; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Cabaz de alimentos base</h1>
+  <p class="sub" id="sub"></p>
+
+  <section class="card hero" id="hero"></section>
+
+  <section class="card">
+    <div class="head"><h2>Evolução do custo do cabaz</h2><button class="toggle" id="vista" type="button">Ver tabela</button></div>
+    <div class="legend" id="legend"></div>
+    <div class="chart" id="chart"><div class="tip" id="tip"></div></div>
+    <div id="tabtot" hidden></div>
+    <p class="note">Soma do preço por kg/L de cada produto (ovos: dúzia). O total de uma loja só é mostrado nos dias em que tem todos os produtos.</p>
+  </section>
+
+  <section class="card">
+    <h2>Preços de hoje</h2>
+    <div class="tablewrap"><table id="tab"></table></div>
+    <p class="note">Preço por kg/L/dúzia da opção mais barata em cada loja. Destacado = mais barato. Passe o rato sobre um preço para ver o produto.</p>
+  </section>
+
+  <section class="card warn" id="falhas" hidden><h2>Avisos da última recolha</h2><ul></ul></section>
+</main>
+<script>
+const D = {"hoje": "2026-11-16", "datas": ["2026-11-16"], "lojas": [{"id": "continente", "nome": "Continente", "totais": [120.57]}, {"id": "pingodoce", "nome": "Pingo Doce", "totais": [139.65]}, {"id": "auchan", "nome": "Auchan", "totais": [121.03]}], "melhor": [114.39], "variacoes": {"ontem": null, "7 dias": null, "30 dias": null, "início": null}, "produtos": [{"nome": "Leite UHT meio-gordo", "unidade": "L", "serie": [0.83], "lojas": {"continente": {"custo": 0.83, "preco": 6.64, "nome": "Leite UHT Meio Gordo Gresso (emb. 8 x 1 lt)", "url": "https://www.continente.pt/produto/leite-uht-meio-gordo-gresso-7599915.html", "promo": false}, "pingodoce": {"custo": 0.85, "preco": 0.85, "nome": "Leite UHT Meio Gordo Pingo Doce (1 L)", "url": "https://www.pingodoce.pt/home/produtos/leite-e-bebidas-vegetais/leite/leite-meio-gordo-e-gordo%E2%80%8B/leite-uht-meio-gordo-pingo-doce-48150.html", "promo": false}, "auchan": {"custo": 0.85, "preco": 0.85, "nome": "LEITE UHT AUCHAN MEIO GORDO 1L", "url": "https://www.auchan.pt/pt/alimentacao/produtos-lacteos/leites/leite-uht/leite-uht-auchan-meio-gordo-1l/3010403.html", "promo": false}}}, {"nome": "Ovos (classe M/L)", "unidade": "dúzia", "serie": [2.88], "lojas": {"continente": {"custo": 2.9904, "preco": 2.99, "nome": "Ovos de Solo Classe M Continente (emb. 12 un)", "url": "https://www.continente.pt/produto/ovos-de-solo-classe-m-continente-7284496.html", "promo": false}, "pingodoce": {"custo": 3.0, "preco": 2.99, "nome": "Ovos de Solo Classe M Pingo Doce (12 Un)", "url": "https://www.pingodoce.pt/home/produtos/as-nossas-marcas/pingo-doce/ovos-de-solo-classe-m-pingo-doce-889028.html", "promo": false}, "auchan": {"custo": 2.88, "preco": 5.75, "nome": "OVOS GALINHAS SOLO AUCHAN CLASSE M 24UN", "url": "https://www.auchan.pt/pt/alimentacao/produtos-lacteos/ovos/ovos-galinhas-criadas-no-solo/ovos-galinhas-solo-auchan-classe-m-24un/446856.html", "promo": false}}}, {"nome": "Arroz carolino", "unidade": "kg", "serie": [0.99], "lojas": {"continente": {"custo": 0.99, "preco": 4.95, "nome": "Arroz Carolino Pack Poupança Continente (emb. 5 kg)", "url": "https://www.continente.pt/produto/arroz-carolino-pack-poupanca-continente-8966612.html", "promo": false}, "pingodoce": {"custo": 1.11, "preco": 1.39, "nome": "Arroz Carolino Louro (1.25 Kg)", "url": "https://www.pingodoce.pt/home/produtos/mercearia/arroz-massa-e-leguminosas/arroz/arroz-carolino-louro-961619.html", "promo": true}, "auchan": {"custo": 1.05, "preco": 1.05, "nome": "ARROZ CAROLINO AUCHAN EXTRA LONGO 1KG", "url": "https://www.auchan.pt/pt/alimentacao/mercearia/arroz-e-massa/arroz/arroz-carolino-auchan-extra-longo-1kg/56832.html", "promo": false}}}, {"nome": "Esparguete", "unidade": "kg", "serie": [0.99], "lojas": {"continente": {"custo": 0.99, "preco": 0.99, "nome": "Massa Esparguete Pack Poupança Continente (emb. 1 kg)", "url": "https://www.continente.pt/produto/massa-esparguete-pack-poupanca-continente-5253941.html", "promo": false}, "pingodoce": {"custo": 0.99, "preco": 0.99, "nome": "Massa Esparguete Pack Poupança Pingo Doce (1 Kg)", "url": "https://www.pingodoce.pt/home/produtos/as-nossas-marcas/pingo-doce/massa-esparguete-pack-poupanca-pingo-doce-895467.html", "promo": false}, "auchan": {"custo": 0.99, "preco": 0.99, "nome": "ESPARGUETE AUCHAN 1KG", "url": "https://www.auchan.pt/pt/alimentacao/mercearia/arroz-e-massa/esparguete-aletria-e-meadas/esparguete-auchan-1kg/3771753.html", "promo": false}}}, {"nome": "Açúcar branco", "unidade": "kg", "serie": [0.85], "lojas": {"continente": {"custo": 0.85, "preco": 1.69, "nome": "Açúcar Branco Pack Poupança Continente (emb. 2 kg)", "url": "https://www.continente.pt/produto/acucar-branco-pack-poupanca-continente-8037045.html", "promo": false}, "pingodoce": {"custo": 0.89, "preco": 0.89, "nome": "Açúcar Branco Granulado Pingo Doce (1 Kg)", "url": "https://www.pingodoce.pt/home/produtos/mercearia/farinha-fermento-e-acucar/acucar-e-adocante/acucar-branco-granulado-pingo-doce-643460.html", "promo": false}, "auchan": {"custo": 0.89, "preco": 0.89, "nome": "AÇÚCAR AUCHAN BRANCO GRANULADO 1KG", "url": "https://www.auchan.pt/pt/alimentacao/mercearia/acucar-e-adocante/acucar/acucar-auchan-branco-granulado-1kg/4002491.html", "promo": false}}}, {"nome": "Farinha de trigo", "unidade": "kg", "serie": [0.69], "lojas": {"continente": {"custo": 0.72, "preco": 3.59, "nome": "Farinha de Trigo T65 Sem Fermento Pack Poupança Continente (emb. 5 kg)", "url": "https://www.continente.pt/produto/farinha-de-trigo-t65-sem-fermento-pack-poupanca-continente-7557692.html", "promo": false}, "pingodoce": {"custo": 0.69, "preco": 0.69, "nome": "Farinha de Trigo Tipo 65 sem Fermento Pérola (1 Kg)", "url": "https://www.pingodoce.pt/home/produtos/mercearia/farinha-fermento-e-acucar/farinha-fermento-e-pao-ralado/farinha-de-trigo-tipo-65-sem-fermento-perola-726416.html", "promo": false}, "auchan": {"custo": 1.6, "preco": 7.99, "nome": "FARINHA DE TRIGO TIPO 65 ESPIGA 5KG", "url": "https://www.auchan.pt/pt/alimentacao/mercearia/farinha/farinha-trigo/farinha-de-trigo-tipo-65-espiga-5kg/770523.html", "promo": false}}}, {"nome": "Azeite virgem extra", "unidade": "L", "serie": [4.83], "lojas": {"continente": {"custo": 4.83, "preco": 14.49, "nome": "Azeite Virgem Extra Continente (emb. 3 lt)", "url": "https://www.continente.pt/produto/azeite-virgem-extra-continente-6028467.html", "promo": true}, "pingodoce": {"custo": 4.98, "preco": 14.95, "nome": "Azeite Virgem Extra Nossas Planicies Pingo Doce (3 L)", "url": "https://www.pingodoce.pt/home/produtos/mercearia/azeite-oleo-e-vinagre/azeite/azeite-virgem-extra-nossas-planicies-pingo-doce-705656.html", "promo": false}, "auchan": {"custo": 4.98, "preco": 14.95, "nome": "AZEITE VIRGEM EXTRA AUCHAN 3 L", "url": "https://www.auchan.pt/pt/alimentacao/mercearia/azeite-oleo-e-vinagre/azeite-virgem-e-extra-virgem/azeite-virgem-extra-auchan-3-l/3829991.html", "promo": false}}}, {"nome": "Óleo alimentar", "unidade": "L", "serie": [1.45], "lojas": {"continente": {"custo": 1.45, "preco": 2.89, "nome": "Óleo Alimentar Frigi (emb. 2 lt)", "url": "https://www.continente.pt/produto/oleo-alimentar-frigi-8965670.html", "promo": true}, "pingodoce": {"custo": 1.49, "preco": 1.49, "nome": "Óleo Alimentar Apetite (1 L)", "url": "https://www.pingodoce.pt/home/produtos/mercearia/azeite-oleo-e-vinagre/oleo/oleo-alimentar-apetite-703571.html", "promo": true}, "auchan": {"custo": 1.55, "preco": 1.55, "nome": "ÓLEO ALIMENTAR FRIGI 1L", "url": "https://www.auchan.pt/pt/alimentacao/mercearia/azeite-oleo-e-vinagre/oleo-girassol-amendoim-e-vegetal/oleo-alimentar-frigi-1l/5852.html", "promo": false}}}, {"nome": "Manteiga com sal", "unidade": "kg", "serie": [7.96], "lojas": {"continente": {"custo": 7.96, "preco": 1.99, "nome": "Manteiga com Sal Continente (emb. 250 gr)", "url": "https://www.continente.pt/produto/manteiga-com-sal-continente-8696605.html", "promo": false}, "pingodoce": {"custo": 7.96, "preco": 1.99, "nome": "Manteiga com Sal Pingo Doce (0.25 Kg)", "url": "https://www.pingodoce.pt/home/produtos/manteiga-margarina-e-natas/manteiga-e-margarina/manteiga-com-sal-pingo-doce-893201.html", "promo": false}, "auchan": {"custo": 8.36, "preco": 2.09, "nome": "MANTEIGA COM SAL AUCHAN À MESA EM PORTUGAL AÇORES 250G", "url": "https://www.auchan.pt/pt/alimentacao/produtos-lacteos/manteiga-cremes-e-margarina/manteiga/manteiga-com-sal-auchan-a-mesa-em-portugal-acores-250g/523676.html", "promo": false}}}, {"nome": "Frango inteiro", "unidade": "kg", "serie": [2.49], "lojas": {"continente": {"custo": 2.49, "preco": 2.49, "nome": "Frango Inteiro com Miúdos Continente (emb. 2,95 kg (aprox.))", "url": "https://www.continente.pt/produto/frango-inteiro-com-miudos-continente-8780471.html", "promo": false}, "pingodoce": {"custo": 2.49, "preco": 2.49, "nome": "Frango Inteiro com Miúdos Nosso Talho (1.5 Kg)", "url": "https://www.pingodoce.pt/home/produtos/talho/aves/frango/frango-inteiro-com-miudos-nosso-talho-378378.html", "promo": false}, "auchan": {"custo": 2.49, "preco": 2.49, "nome": "FRANGO INTEIRO COM MIÚDOS EM SACO AUCHAN KG", "url": "https://www.auchan.pt/pt/produtos-frescos/talho/frango-e-galinha/frango-inteiro-com-miudos-em-saco-auchan-kg/2696374.html", "promo": false}}}, {"nome": "Carne de porco (lombo)", "unidade": "kg", "serie": [4.99], "lojas": {"continente": {"custo": 5.29, "preco": 5.29, "nome": "Lombo de Porco sem Osso para Assar Continente (emb. 1,89 kg (aprox.))", "url": "https://www.continente.pt/produto/lombo-de-porco-sem-osso-para-assar-continente-2525325.html", "promo": false}, "pingodoce": {"custo": 4.99, "preco": 4.99, "nome": "Lombo de Porco Embalado Nosso Talho (1 Kg)", "url": "https://www.pingodoce.pt/home/produtos/talho/porco/lombo-de-porco-embalado-nosso-talho-980664.html", "promo": false}, "auchan": {"custo": 4.99, "preco": 4.99, "nome": "PORCO NACIONAL LOMBO S / OSSO KG", "url": "https://www.auchan.pt/pt/produtos-frescos/talho/porco/porco-nacional-lombo-s-osso-kg/25666.html", "promo": false}}}, {"nome": "Carne de vaca picada", "unidade": "kg", "serie": [11.69], "lojas": {"continente": {"custo": 13.88, "preco": 12.49, "nome": "Preparado de Carne Picada de Bovino Continente (emb. 900 gr)", "url": "https://www.continente.pt/produto/preparado-de-carne-picada-de-bovino-continente-7430620.html", "promo": false}, "pingodoce": {"custo": 17.45, "preco": 6.98, "nome": "Carne Picada Novilho Angus Pingo Doce (0.4 Un)", "url": "https://www.pingodoce.pt/home/produtos/talho/vitela-vitelao-e-bovino/angus/carne-picada-novilho-angus-pingo-doce-1001696.html", "promo": false}, "auchan": {"custo": 11.69, "preco": 11.69, "nome": "PREPARADO DE CARNE PICADA DE BOVINO 1KG", "url": "https://www.auchan.pt/pt/produtos-frescos/talho/hamburgueres-e-carne-picada/preparado-de-carne-picada-de-bovino-1kg/3667063.html", "promo": false}}}, {"nome": "Pescada congelada", "unidade": "kg", "serie": [5.99], "lojas": {"continente": {"custo": 6.18, "preco": 3.09, "nome": "Posta de Pescada para Fritar Congelada (emb. 500 gr)", "url": "https://www.continente.pt/produto/posta-de-pescada-para-fritar-congelada-7628102.html", "promo": true}, "pingodoce": {"custo": 5.99, "preco": 5.99, "nome": "Pescada Média da África do Sul a Granel Congelada Nossa Peixaria (0.7 Kg)", "url": "https://www.pingodoce.pt/home/produtos/peixaria/peixe/pescada/pescada-media-da-africa-do-sul-a-granel-congelada-nossa-peixaria-562919.html", "promo": true}, "auchan": {"custo": 5.99, "preco": 5.99, "nome": "PESCADA CONGELADA ARGENTINA:600/900 KG", "url": "https://www.auchan.pt/pt/congelados/peixe/peixe-inteiro/pescada-congelada-argentina600900-kg/153443.html", "promo": false}}}, {"nome": "Bacalhau", "unidade": "kg", "serie": [20.99], "lojas": {"continente": {"custo": 20.99, "preco": 20.99, "nome": "Bacalhau Graúdo 1ª Noruega Seco (Quant. Mínima = 2,55 kg)", "url": "https://www.continente.pt/produto/bacalhau-graudo-1-noruega-seco-2202534.html", "promo": false}, "pingodoce": {"custo": 21.99, "preco": 21.99, "nome": "Bacalhau Graudo 1ª Nossa Peixaria (2.37 Kg)", "url": "https://www.pingodoce.pt/home/produtos/peixaria/bacalhau/bacalhau-salgado-seco/bacalhau-graudo-1%C2%AA-nossa-peixaria-350213.html", "promo": false}, "auchan": {"custo": 21.99, "preco": 21.99, "nome": "BACALHAU GRAÚDO NORUEGA KG", "url": "https://www.auchan.pt/pt/produtos-frescos/peixaria/bacalhau/bacalhau-graudo-noruega-kg/100949.html", "promo": false}}}, {"nome": "Atum em óleo", "unidade": "kg", "serie": [9.98], "lojas": {"continente": {"custo": 9.98, "preco": 6.49, "nome": "Atum Posta em Óleo Vegetal Continente (emb. 650 gr)", "url": "https://www.continente.pt/produto/atum-posta-em-oleo-vegetal-continente-8061421.html", "promo": false}, "pingodoce": {"custo": 25.38, "preco": 1.98, "nome": "Atum em Óleo Vegetal Ramirez (0.078 Kg)", "url": "https://www.pingodoce.pt/home/produtos/mercearia/conservas/atum/atum-em-oleo-vegetal-ramirez-914809.html", "promo": false}, "auchan": {"custo": 12.36, "preco": 0.89, "nome": "ATUM BINGO EM ÓLEO VEGETAL 110(72)G", "url": "https://www.auchan.pt/pt/alimentacao/mercearia/conservas/atum/atum-bingo-em-oleo-vegetal-110%2872%29g/3451648.html", "promo": false}}}, {"nome": "Batata", "unidade": "kg", "serie": [1.12], "lojas": {"continente": {"custo": 1.14, "preco": 5.69, "nome": "Batata Vermelha Continente (emb. 5 kg)", "url": "https://www.continente.pt/produto/batata-vermelha-continente-7577954.html", "promo": false}, "pingodoce": {"custo": 1.14, "preco": 5.69, "nome": "Batata Vermelha Embalada Os Nossos Frescos (5 Kg)", "url": "https://www.pingodoce.pt/home/produtos/frutas-e-vegetais/vegetais/batatas-cebolas-e-alhos/batata-vermelha-embalada-os-nossos-frescos-694770.html", "promo": false}, "auchan": {"custo": 1.12, "preco": 5.59, "nome": "BATATA AUCHAN 5 KG", "url": "https://www.auchan.pt/pt/produtos-frescos/legumes/batatas-alho-e-cebola/batata-auchan-5-kg/3483252.html", "promo": false}}}, {"nome": "Cebola", "unidade": "kg", "serie": [1.0], "lojas": {"continente": {"custo": 1.0, "preco": 1.99, "nome": "Cebola Zero Desperdício Continente (emb. 2 kg)", "url": "https://www.continente.pt/produto/cebola-zero-desperdicio-continente-3618608.html", "promo": false}, "pingodoce": {"custo": 1.19, "preco": 1.19, "nome": "Cebola a Granel Nossa Fruta e Legumes (0.15 Kg)", "url": "https://www.pingodoce.pt/home/produtos/frutas-e-vegetais/vegetais/batatas-cebolas-e-alhos/cebola-a-granel-nossa-fruta-e-legumes-287288.html", "promo": true}, "auchan": {"custo": 1.0, "preco": 1.99, "nome": "CEBOLA AUCHAN 2 KG", "url": "https://www.auchan.pt/pt/produtos-frescos/legumes/batatas-alho-e-cebola/cebola-auchan-2-kg/3653518.html", "promo": true}}}, {"nome": "Cenoura", "unidade": "kg", "serie": [0.89], "lojas": {"continente": {"custo": 1.19, "preco": 1.19, "nome": "Cenoura Continente (emb. 1 kg)", "url": "https://www.continente.pt/produto/cenoura-continente-2885107.html", "promo": false}, "pingodoce": {"custo": 1.0, "preco": 1.99, "nome": "Cenoura Embalada Os Nossos Frescos (2 Kg)", "url": "https://www.pingodoce.pt/home/produtos/frutas-e-vegetais/vegetais/cenouras-couves-e-brocolos/cenoura-embalada-os-nossos-frescos-906668.html", "promo": false}, "auchan": {"custo": 0.89, "preco": 0.89, "nome": "CENOURA AUCHAN CULTIVAMOS O BOM KG", "url": "https://www.auchan.pt/pt/produtos-frescos/legumes/abobora-cenoura-e-alho-frances/cenoura-auchan-cultivamos-o-bom-kg/3374234.html", "promo": false}}}, {"nome": "Tomate", "unidade": "kg", "serie": [1.69], "lojas": {"continente": {"custo": 1.69, "preco": 1.69, "nome": "Tomate Zero Desperdício Continente (emb. 1 kg)", "url": "https://www.continente.pt/produto/tomate-zero-desperdicio-continente-7706614.html", "promo": false}, "pingodoce": {"custo": 2.49, "preco": 2.49, "nome": "Tomate Alongado  57/67 Nossa Fruta e Legumes (0.15 Kg)", "url": "https://www.pingodoce.pt/home/produtos/frutas-e-vegetais/vegetais/tomates-pepinos-e-pimentos/tomate-alongado--57%2F67-nossa-fruta-e-legumes-46397.html", "promo": false}, "auchan": {"custo": 2.49, "preco": 2.49, "nome": "TOMATE KG", "url": "https://www.auchan.pt/pt/produtos-frescos/legumes/tomate-pepino-e-pimentos/tomate-kg/294878.html", "promo": false}}}, {"nome": "Banana", "unidade": "kg", "serie": [1.19], "lojas": {"continente": {"custo": 1.19, "preco": 1.19, "nome": "Banana Continente (Quant. Mínima = 600 gr (3 un))", "url": "https://www.continente.pt/produto/banana-continente-2597619.html", "promo": false}, "pingodoce": {"custo": 1.19, "preco": 1.19, "nome": "Banana Importada Nossa Fruta e Legumes (0.2 Kg)", "url": "https://www.pingodoce.pt/home/produtos/frutas-e-vegetais/frutas/fruta-da-epoca/banana-importada-nossa-fruta-e-legumes-43218.html", "promo": false}, "auchan": {"custo": 1.19, "preco": 1.19, "nome": "BANANA DEL MONTE KG", "url": "https://www.auchan.pt/pt/produtos-frescos/fruta/banana-e-frutos-tropicais/banana-del-monte-kg/234229.html", "promo": false}}}, {"nome": "Maçã", "unidade": "kg", "serie": [1.66], "lojas": {"continente": {"custo": 1.89, "preco": 1.89, "nome": "Maçã Gala Sem Resíduos de Pesticidas Continente (emb. 1 kg)", "url": "https://www.continente.pt/produto/maca-gala-sem-residuos-de-pesticidas-continente-7683300.html", "promo": false}, "pingodoce": {"custo": 1.66, "preco": 2.49, "nome": "Maçã Gala Embalada Nossa Fruta e Legumes (1.5 Kg)", "url": "https://www.pingodoce.pt/home/produtos/frutas-e-vegetais/frutas/fruta-da-epoca/maca-gala-embalada-nossa-fruta-e-legumes-952933.html", "promo": false}, "auchan": {"custo": 1.99, "preco": 1.99, "nome": "MAÇÃ GALA ALCOBAÇA IGP AUCHAN 1 KG", "url": "https://www.auchan.pt/pt/produtos-frescos/fruta/macas-peras-e-uvas/maca-gala-alcobaca-igp-auchan-1-kg/3355854.html", "promo": false}}}, {"nome": "Iogurte natural", "unidade": "kg", "serie": [1.39], "lojas": {"continente": {"custo": 1.49, "preco": 1.49, "nome": "Iogurte Natural Continente (emb. 1000 gr (8 un))", "url": "https://www.continente.pt/produto/iogurte-natural-continente-6804954.html", "promo": false}, "pingodoce": {"custo": 1.39, "preco": 1.39, "nome": "Iogurte Natural Pack 8 Pingo Doce (1 Kg)", "url": "https://www.pingodoce.pt/home/produtos/iogurtes-e-sobremesas/iogurtes/iogurtes-naturais%E2%80%8B/iogurte-natural-pack-8-pingo-doce-969872.html", "promo": false}, "auchan": {"custo": 1.58, "preco": 0.79, "nome": "IOGURTE AUCHAN NATURAL 4X125G", "url": "https://www.auchan.pt/pt/alimentacao/produtos-lacteos/iogurtes/magros-e-naturais/iogurte-auchan-natural-4x125g/726765.html", "promo": false}}}, {"nome": "Queijo flamengo fatiado", "unidade": "kg", "serie": [7.11], "lojas": {"continente": {"custo": 7.36, "preco": 5.89, "nome": "Queijo Flamengo Fatiado Campainha (2 un x 400 gr (800 gr))", "url": "https://www.continente.pt/produto/queijo-flamengo-fatiado-campainha-6419166.html", "promo": true}, "pingodoce": {"custo": 7.11, "preco": 5.69, "nome": "Queijo Flamengo Fatiado Campainha (0.8 Kg)", "url": "https://www.pingodoce.pt/home/produtos/charcutaria-e-queijos/queijos/queijo-fatiado-e-bola%E2%80%8B/queijo-flamengo-fatiado-campainha-1007091.html", "promo": true}, "auchan": {"custo": 7.11, "preco": 5.69, "nome": "QUEIJO CAMPAINHA FLAMENGO FATIADO 800G", "url": "https://www.auchan.pt/pt/produtos-frescos/queijaria/queijo-fatiado-e-barra/queijo-campainha-flamengo-fatiado-800g/1127256.html", "promo": false}}}, {"nome": "Fiambre", "unidade": "kg", "serie": [6.6], "lojas": {"continente": {"custo": 7.48, "preco": 2.99, "nome": "Fiambre da Pá Fatiado Pack Familiar Continente (2 un x 200 gr (400 gr))", "url": "https://www.continente.pt/produto/fiambre-da-pa-fatiado-pack-familiar-continente-7458345.html", "promo": false}, "pingodoce": {"custo": 6.6, "preco": 0.99, "nome": "Fiambre Corrente Fatias Finas Porminho (0.15 Kg)", "url": "https://www.pingodoce.pt/home/produtos/charcutaria-e-queijos/charcutaria/fiambre-mortadela-e-chouricao%E2%80%8B/fiambre-corrente-fatias-finas-porminho-981932.html", "promo": true}, "auchan": {"custo": 6.75, "preco": 1.35, "nome": "FIAMBRE CORRENTE POLEGAR FATIAS 200G", "url": "https://www.auchan.pt/pt/produtos-frescos/charcutaria/fiambre-de-porco/fiambre-corrente-polegar-fatias-200g/3679704.html", "promo": false}}}, {"nome": "Feijão (lata/frasco)", "unidade": "kg", "serie": [2.1], "lojas": {"continente": {"custo": 2.1, "preco": 0.84, "nome": "Feijão Encarnado Cozido Continente (emb. 540 gr (peso escorrido 400 gr))", "url": "https://www.continente.pt/produto/feijao-encarnado-cozido-continente-6592523.html", "promo": true}, "pingodoce": {"custo": 2.13, "preco": 0.85, "nome": "Feijão Manteiga Cozido em Frasco Pingo Doce (0.4 Kg)", "url": "https://www.pingodoce.pt/home/produtos/mercearia/conservas/feijao-grao-e-outros/feijao-manteiga-cozido-em-frasco-pingo-doce-353390.html", "promo": false}, "auchan": {"custo": 2.21, "preco": 1.15, "nome": "FEIJÃO PRETO AUCHAN COZIDO 820(520)G", "url": "https://www.auchan.pt/pt/alimentacao/mercearia/conservas/cogumelo-milho-ervilha-feijao-e-outros/feijao-preto-auchan-cozido-820%28520%29g/640417.html", "promo": false}}}, {"nome": "Café moído", "unidade": "kg", "serie": [10.41], "lojas": {"continente": {"custo": 11.8, "preco": 2.95, "nome": "Café Moído Moagem Universal Intenso Int 10 Continente (emb. 250 gr)", "url": "https://www.continente.pt/produto/cafe-moido-moagem-universal-intenso-int-10-continente-8773239.html", "promo": false}, "pingodoce": {"custo": 11.8, "preco": 2.95, "nome": "Café Moído Moagem Universal Envolvente Pingo Doce (0.25 Kg)", "url": "https://www.pingodoce.pt/home/produtos/cafe-cha-e-achocolatados/cafe-moido-e-grao/cafe-moido-moagem-universal-envolvente-pingo-doce-961052.html", "promo": false}, "auchan": {"custo": 10.41, "preco": 2.29, "nome": "CAFÉ MOÍDO DELTA MISTURA IBÉRICA 220 G", "url": "https://www.auchan.pt/pt/alimentacao/mercearia/cafe-cha-e-infusao/cafe-de-maquina-grao-e-pastilhas/cafe-moido-delta-mistura-iberica-220-g/3633076.html", "promo": false}}}, {"nome": "Pão de forma", "unidade": "kg", "serie": [1.63], "lojas": {"continente": {"custo": 1.82, "preco": 1.49, "nome": "Pão de Forma com Côdea Continente (emb. 820 gr)", "url": "https://www.continente.pt/produto/pao-de-forma-com-codea-continente-7157938.html", "promo": false}, "pingodoce": {"custo": 1.7, "preco": 1.39, "nome": "Pão de Forma para Torradas Pingo Doce (0.82 Kg)", "url": "https://www.pingodoce.pt/home/produtos/padaria-e-pastelaria/pao-embalado/pao-de-forma-e-embalado/pao-de-forma-para-torradas-pingo-doce-1011731.html", "promo": false}, "auchan": {"custo": 1.63, "preco": 0.98, "nome": "PÃO DE FORMA AUCHAN 600G", "url": "https://www.auchan.pt/pt/alimentacao/mercearia/tostas-e-pao-embalado/pao-embalado/pao-de-forma-auchan-600g/3930693.html", "promo": false}}}], "falhas": []};
+const COR = ["var(--s1)", "var(--s2)", "var(--s3)"];
+const eur = v => v == null ? "—" : v.toLocaleString("pt-PT", { style: "currency", currency: "EUR" });
+const dataPT = s => new Date(s + "T12:00:00").toLocaleDateString("pt-PT", { day: "numeric", month: "short", year: "numeric" });
+const pct = p => {
+  if (p == null) return '<span class="flat">—</span>';
+  if (Math.abs(p) < 0.05) return '<span class="flat">= 0,0%</span>';
+  const c = p > 0 ? "up" : "down", s = p > 0 ? "▲" : "▼";
+  return `<span class="${c}">${s} ${(p > 0 ? "+" : "") + p.toFixed(1).replace(".", ",")}%</span>`;
+};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+document.getElementById("sub").textContent =
+  `${D.produtos.length} produtos essenciais em ${D.lojas.map(l => l.nome).join(", ")} · atualizado a ${dataPT(D.hoje)} · ${D.datas.length} dia(s) de histórico`;
+
+// --- hero
+const hero = document.getElementById("hero");
+hero.innerHTML = `<div><div class="lbl">Cabaz ao melhor preço hoje</div><div class="big">${eur(D.melhor.at(-1))}</div></div>` +
+  Object.entries(D.variacoes).map(([k, v]) => `<div class="stat"><div class="lbl">vs ${k}</div><div class="v">${pct(v)}</div></div>`).join("");
+
+// --- séries do gráfico
+const series = [
+  ...D.lojas.map((l, i) => ({ nome: l.nome, cor: COR[i], vals: l.totais })),
+  { nome: "Melhor preço", cor: "var(--best)", vals: D.melhor, dash: true },
+];
+document.getElementById("legend").innerHTML = series.map(s =>
+  `<span><i class="${s.dash ? "dash" : ""}" style="background:${s.cor}"></i>${esc(s.nome)}</span>`).join("");
+
+function desenhar() {
+  const box = document.getElementById("chart");
+  const W = Math.max(320, box.clientWidth), H = Math.round(Math.min(340, Math.max(220, W * 0.42)));
+  const m = { t: 12, r: W < 520 ? 12 : 96, b: 28, l: 56 };
+  const todos = series.flatMap(s => s.vals).filter(v => v != null);
+  let lo = Math.min(...todos), hi = Math.max(...todos);
+  const pad = Math.max((hi - lo) * 0.15, hi * 0.01, 0.5); lo -= pad; hi += pad;
+  const n = D.datas.length;
+  const x = i => m.l + (n === 1 ? (W - m.l - m.r) / 2 : i * (W - m.l - m.r) / (n - 1));
+  const y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+  const ticks = [];
+  const passo = (() => { const r = (hi - lo) / 5, p = 10 ** Math.floor(Math.log10(r)); return [1, 2, 2.5, 5, 10].map(k => k * p).find(k => k >= r); })();
+  for (let v = Math.ceil(lo / passo) * passo; v <= hi; v += passo) ticks.push(v);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução do custo do cabaz por loja">`;
+  for (const t of ticks) svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--grid)"/>` +
+    `<text x="${m.l - 8}" y="${y(t) + 4}" text-anchor="end" font-size="12" fill="var(--ink-3)">${t.toFixed(passo < 1 ? 1 : 0)} €</text>`;
+  const nx = Math.max(1, Math.ceil(n / Math.floor((W - m.l - m.r) / 90)));
+  D.datas.forEach((d, i) => { if (i % nx === 0 || i === n - 1) svg += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="12" fill="var(--ink-3)">${new Date(d + "T12:00").toLocaleDateString("pt-PT", { day: "numeric", month: "short" })}</text>`; });
+  const fins = [];
+  for (const s of series) {
+    let path = "", on = false;
+    s.vals.forEach((v, i) => { if (v == null) { on = false; return; } path += (on ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1); on = true; });
+    svg += `<path d="${path}" fill="none" stroke="${s.cor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" ${s.dash ? 'stroke-dasharray="5 4"' : ""}/>`;
+    const last = s.vals.findLastIndex(v => v != null);
+    if (last >= 0) { svg += `<circle cx="${x(last)}" cy="${y(s.vals[last])}" r="4" fill="${s.cor}" stroke="var(--surface)" stroke-width="2"/>`; fins.push({ s, y: y(s.vals[last]), x: x(last) }); }
+  }
+  if (m.r > 50) { // rótulos diretos no fim das linhas, sem sobreposição
+    fins.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < fins.length; i++) if (fins[i].y - fins[i - 1].y < 15) fins[i].y = fins[i - 1].y + 15;
+    for (const f of fins) svg += `<text x="${f.x + 10}" y="${f.y + 4}" font-size="12" fill="var(--ink-2)">${esc(f.s.nome)}</text>`;
+  }
+  svg += `<line id="cross" y1="${m.t}" y2="${H - m.b}" stroke="var(--ink-3)" stroke-width="1" visibility="hidden"/>`;
+  svg += `<rect x="${m.l - 10}" y="0" width="${W - m.l - m.r + 20}" height="${H}" fill="transparent" id="hit"/></svg>`;
+  box.querySelectorAll("svg").forEach(e => e.remove());
+  box.insertAdjacentHTML("afterbegin", svg);
+  const hit = box.querySelector("#hit"), cross = box.querySelector("#cross"), tip = document.getElementById("tip");
+  const mostrar = ev => {
+    const r = box.querySelector("svg").getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width;
+    const i = n === 1 ? 0 : Math.max(0, Math.min(n - 1, Math.round((px - m.l) / ((W - m.l - m.r) / (n - 1)))));
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility", "visible");
+    tip.innerHTML = `<b>${dataPT(D.datas[i])}</b>` + series.map(s => `<div class="row" style="--c:${s.cor}"><span>${esc(s.nome)}</span><span>${eur(s.vals[i])}</span></div>`).join("");
+    tip.style.display = "block";
+    const left = x(i) * r.width / W;
+    tip.style.left = Math.min(left + 12, r.width - tip.offsetWidth) + "px";
+    tip.style.top = "8px";
+  };
+  hit.addEventListener("pointermove", mostrar);
+  hit.addEventListener("pointerleave", () => { tip.style.display = "none"; cross.setAttribute("visibility", "hidden"); });
+}
+desenhar();
+new ResizeObserver(() => desenhar()).observe(document.getElementById("chart"));
+
+// --- vista em tabela dos totais
+document.getElementById("tabtot").innerHTML = `<div class="tablewrap"><table><tr><th>Data</th>${series.map(s => `<th>${esc(s.nome)}</th>`).join("")}</tr>` +
+  D.datas.map((d, i) => `<tr><td>${dataPT(d)}</td>${series.map(s => `<td>${eur(s.vals[i])}</td>`).join("")}</tr>`).reverse().join("") + "</table></div>";
+document.getElementById("vista").addEventListener("click", e => {
+  const t = document.getElementById("tabtot"), c = document.getElementById("chart"), l = document.getElementById("legend");
+  const tabela = t.hidden; t.hidden = !tabela; c.hidden = tabela; l.hidden = tabela;
+  e.target.textContent = tabela ? "Ver gráfico" : "Ver tabela";
+  if (!tabela) desenhar();
+});
+
+// --- tabela de produtos
+const spark = vals => {
+  const v = vals.map((a, i) => [i, a]).filter(p => p[1] != null);
+  if (v.length < 2) return "";
+  const lo = Math.min(...v.map(p => p[1])), hi = Math.max(...v.map(p => p[1])), n = vals.length - 1;
+  const pts = v.map(([i, a]) => `${(i / n * 86 + 2).toFixed(1)},${(hi === lo ? 12 : 21 - (a - lo) / (hi - lo) * 18).toFixed(1)}`).join(" ");
+  return `<svg class="spark" viewBox="0 0 90 24" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--s1)" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+};
+const tab = document.getElementById("tab");
+tab.innerHTML = `<tr><th>Produto</th>${D.lojas.map(l => `<th>${esc(l.nome)}</th>`).join("")}<th>Var. dia</th><th>Tendência</th></tr>` +
+  D.produtos.map(p => {
+    const custos = D.lojas.map(l => p.lojas[l.id]?.custo).filter(v => v != null);
+    const mn = Math.min(...custos);
+    const s = p.serie, prev = s.length > 1 ? s.at(-2) : null;
+    return `<tr><td>${esc(p.nome)} <span class="u">/${esc(p.unidade)}</span></td>` +
+      D.lojas.map(l => {
+        const o = p.lojas[l.id];
+        if (!o) return `<td class="flat">—</td>`;
+        const t = `${esc(o.nome)} — ${eur(o.preco)}`;
+        return `<td class="${custos.length > 1 && o.custo === mn ? "min" : ""}"><a href="${esc(o.url)}" title="${t}" target="_blank" rel="noopener">${eur(o.custo)}</a>${o.promo ? '<span class="tag">promo</span>' : ""}</td>`;
+      }).join("") +
+      `<td>${prev != null && s.at(-1) != null ? pct((s.at(-1) / prev - 1) * 100) : pct(null)}</td><td>${spark(s)}</td></tr>`;
+  }).join("");
+
+if (D.falhas.length) {
+  const f = document.getElementById("falhas"); f.hidden = false;
+  f.querySelector("ul").innerHTML = D.falhas.map(x => `<li>${esc(x)}</li>`).join("");
+}
+</script>
+</body>
+</html>
