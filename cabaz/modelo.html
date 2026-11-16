@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cabaz de Alimentos</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2; --surface: #fcfcfb; --border: #e3e1dc; --grid: #ebe9e4;
+  --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #7a7974;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --best: #0b0b0b;
+  --up: #c6382f; --down: #0f7a3a; --promo-bg: #fff1d6; --promo-ink: #7a4b00;
+  --hl: #eef4fc;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --border: #2e2e2c; --grid: #262624;
+    --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #8f8e86;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --best: #f0efec;
+    --up: #f0716a; --down: #3fbf6f; --promo-bg: #3a2c10; --promo-ink: #f3c46b;
+    --hl: #1d2836;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --border: #2e2e2c; --grid: #262624;
+  --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #8f8e86;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --best: #f0efec;
+  --up: #f0716a; --down: #3fbf6f; --promo-bg: #3a2c10; --promo-ink: #f3c46b;
+  --hl: #1d2836;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1040px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 17px; margin: 0 0 12px; }
+.sub { color: var(--ink-2); margin: 0 0 24px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+.hero { display: grid; grid-template-columns: minmax(200px, 1.3fr) repeat(auto-fit, minmax(120px, 1fr)); gap: 20px; align-items: end; }
+.big { font-size: 40px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.lbl { color: var(--ink-2); font-size: 13px; }
+.stat .v { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--ink-3); }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--ink-2); margin-bottom: 8px; }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.legend i.dash { background: repeating-linear-gradient(90deg, var(--best) 0 4px, transparent 4px 7px) !important; }
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,.12); display: none; white-space: nowrap; z-index: 2; }
+.tip b { display: block; margin-bottom: 4px; }
+.tip .row { display: flex; justify-content: space-between; gap: 16px; }
+.tip .row span:first-child::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin-right: 6px; }
+.tablewrap { overflow-x: auto; margin: 0 -20px; padding: 0 20px; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+th { font-size: 12px; color: var(--ink-2); font-weight: 600; position: sticky; top: 0; background: var(--surface); }
+th:first-child, td:first-child { text-align: left; white-space: normal; min-width: 170px; }
+td .u { color: var(--ink-3); font-size: 12px; }
+td a { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--ink-3); }
+td.min { background: var(--hl); font-weight: 650; }
+.tag { font-size: 11px; background: var(--promo-bg); color: var(--promo-ink); border-radius: 4px; padding: 1px 5px; margin-left: 4px; }
+.spark { width: 90px; height: 24px; vertical-align: middle; }
+.note { color: var(--ink-3); font-size: 13px; margin-top: 10px; }
+.warn li { color: var(--ink-2); font-size: 14px; }
+.head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.toggle { font: inherit; font-size: 13px; background: none; border: 1px solid var(--border); color: var(--ink-2); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+@media (max-width: 560px) { .big { font-size: 32px; } .hero { grid-template-columns: 1fr 1fr; } .hero > :first-child { grid-column: 1 / -1; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Cabaz de alimentos base</h1>
+  <p class="sub" id="sub"></p>
+
+  <section class="card hero" id="hero"></section>
+
+  <section class="card">
+    <div class="head"><h2>Evolução do custo do cabaz</h2><button class="toggle" id="vista" type="button">Ver tabela</button></div>
+    <div class="legend" id="legend"></div>
+    <div class="chart" id="chart"><div class="tip" id="tip"></div></div>
+    <div id="tabtot" hidden></div>
+    <p class="note">Soma do preço por kg/L de cada produto (ovos: dúzia). O total de uma loja só é mostrado nos dias em que tem todos os produtos.</p>
+  </section>
+
+  <section class="card">
+    <h2>Preços de hoje</h2>
+    <div class="tablewrap"><table id="tab"></table></div>
+    <p class="note">Preço por kg/L/dúzia da opção mais barata em cada loja. Destacado = mais barato. Passe o rato sobre um preço para ver o produto.</p>
+  </section>
+
+  <section class="card warn" id="falhas" hidden><h2>Avisos da última recolha</h2><ul></ul></section>
+</main>
+<script>
+const D = /*__DADOS__*/null;
+const COR = ["var(--s1)", "var(--s2)", "var(--s3)"];
+const eur = v => v == null ? "—" : v.toLocaleString("pt-PT", { style: "currency", currency: "EUR" });
+const dataPT = s => new Date(s + "T12:00:00").toLocaleDateString("pt-PT", { day: "numeric", month: "short", year: "numeric" });
+const pct = p => {
+  if (p == null) return '<span class="flat">—</span>';
+  if (Math.abs(p) < 0.05) return '<span class="flat">= 0,0%</span>';
+  const c = p > 0 ? "up" : "down", s = p > 0 ? "▲" : "▼";
+  return `<span class="${c}">${s} ${(p > 0 ? "+" : "") + p.toFixed(1).replace(".", ",")}%</span>`;
+};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+document.getElementById("sub").textContent =
+  `${D.produtos.length} produtos essenciais em ${D.lojas.map(l => l.nome).join(", ")} · atualizado a ${dataPT(D.hoje)} · ${D.datas.length} dia(s) de histórico`;
+
+// --- hero
+const hero = document.getElementById("hero");
+hero.innerHTML = `<div><div class="lbl">Cabaz ao melhor preço hoje</div><div class="big">${eur(D.melhor.at(-1))}</div></div>` +
+  Object.entries(D.variacoes).map(([k, v]) => `<div class="stat"><div class="lbl">vs ${k}</div><div class="v">${pct(v)}</div></div>`).join("");
+
+// --- séries do gráfico
+const series = [
+  ...D.lojas.map((l, i) => ({ nome: l.nome, cor: COR[i], vals: l.totais })),
+  { nome: "Melhor preço", cor: "var(--best)", vals: D.melhor, dash: true },
+];
+document.getElementById("legend").innerHTML = series.map(s =>
+  `<span><i class="${s.dash ? "dash" : ""}" style="background:${s.cor}"></i>${esc(s.nome)}</span>`).join("");
+
+function desenhar() {
+  const box = document.getElementById("chart");
+  const W = Math.max(320, box.clientWidth), H = Math.round(Math.min(340, Math.max(220, W * 0.42)));
+  const m = { t: 12, r: W < 520 ? 12 : 96, b: 28, l: 56 };
+  const todos = series.flatMap(s => s.vals).filter(v => v != null);
+  let lo = Math.min(...todos), hi = Math.max(...todos);
+  const pad = Math.max((hi - lo) * 0.15, hi * 0.01, 0.5); lo -= pad; hi += pad;
+  const n = D.datas.length;
+  const x = i => m.l + (n === 1 ? (W - m.l - m.r) / 2 : i * (W - m.l - m.r) / (n - 1));
+  const y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+  const ticks = [];
+  const passo = (() => { const r = (hi - lo) / 5, p = 10 ** Math.floor(Math.log10(r)); return [1, 2, 2.5, 5, 10].map(k => k * p).find(k => k >= r); })();
+  for (let v = Math.ceil(lo / passo) * passo; v <= hi; v += passo) ticks.push(v);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução do custo do cabaz por loja">`;
+  for (const t of ticks) svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--grid)"/>` +
+    `<text x="${m.l - 8}" y="${y(t) + 4}" text-anchor="end" font-size="12" fill="var(--ink-3)">${t.toFixed(passo < 1 ? 1 : 0)} €</text>`;
+  const nx = Math.max(1, Math.ceil(n / Math.floor((W - m.l - m.r) / 90)));
+  D.datas.forEach((d, i) => { if (i % nx === 0 || i === n - 1) svg += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="12" fill="var(--ink-3)">${new Date(d + "T12:00").toLocaleDateString("pt-PT", { day: "numeric", month: "short" })}</text>`; });
+  const fins = [];
+  for (const s of series) {
+    let path = "", on = false;
+    s.vals.forEach((v, i) => { if (v == null) { on = false; return; } path += (on ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1); on = true; });
+    svg += `<path d="${path}" fill="none" stroke="${s.cor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" ${s.dash ? 'stroke-dasharray="5 4"' : ""}/>`;
+    const last = s.vals.findLastIndex(v => v != null);
+    if (last >= 0) { svg += `<circle cx="${x(last)}" cy="${y(s.vals[last])}" r="4" fill="${s.cor}" stroke="var(--surface)" stroke-width="2"/>`; fins.push({ s, y: y(s.vals[last]), x: x(last) }); }
+  }
+  if (m.r > 50) { // rótulos diretos no fim das linhas, sem sobreposição
+    fins.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < fins.length; i++) if (fins[i].y - fins[i - 1].y < 15) fins[i].y = fins[i - 1].y + 15;
+    for (const f of fins) svg += `<text x="${f.x + 10}" y="${f.y + 4}" font-size="12" fill="var(--ink-2)">${esc(f.s.nome)}</text>`;
+  }
+  svg += `<line id="cross" y1="${m.t}" y2="${H - m.b}" stroke="var(--ink-3)" stroke-width="1" visibility="hidden"/>`;
+  svg += `<rect x="${m.l - 10}" y="0" width="${W - m.l - m.r + 20}" height="${H}" fill="transparent" id="hit"/></svg>`;
+  box.querySelectorAll("svg").forEach(e => e.remove());
+  box.insertAdjacentHTML("afterbegin", svg);
+  const hit = box.querySelector("#hit"), cross = box.querySelector("#cross"), tip = document.getElementById("tip");
+  const mostrar = ev => {
+    const r = box.querySelector("svg").getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width;
+    const i = n === 1 ? 0 : Math.max(0, Math.min(n - 1, Math.round((px - m.l) / ((W - m.l - m.r) / (n - 1)))));
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility", "visible");
+    tip.innerHTML = `<b>${dataPT(D.datas[i])}</b>` + series.map(s => `<div class="row" style="--c:${s.cor}"><span>${esc(s.nome)}</span><span>${eur(s.vals[i])}</span></div>`).join("");
+    tip.style.display = "block";
+    const left = x(i) * r.width / W;
+    tip.style.left = Math.min(left + 12, r.width - tip.offsetWidth) + "px";
+    tip.style.top = "8px";
+  };
+  hit.addEventListener("pointermove", mostrar);
+  hit.addEventListener("pointerleave", () => { tip.style.display = "none"; cross.setAttribute("visibility", "hidden"); });
+}
+desenhar();
+new ResizeObserver(() => desenhar()).observe(document.getElementById("chart"));
+
+// --- vista em tabela dos totais
+document.getElementById("tabtot").innerHTML = `<div class="tablewrap"><table><tr><th>Data</th>${series.map(s => `<th>${esc(s.nome)}</th>`).join("")}</tr>` +
+  D.datas.map((d, i) => `<tr><td>${dataPT(d)}</td>${series.map(s => `<td>${eur(s.vals[i])}</td>`).join("")}</tr>`).reverse().join("") + "</table></div>";
+document.getElementById("vista").addEventListener("click", e => {
+  const t = document.getElementById("tabtot"), c = document.getElementById("chart"), l = document.getElementById("legend");
+  const tabela = t.hidden; t.hidden = !tabela; c.hidden = tabela; l.hidden = tabela;
+  e.target.textContent = tabela ? "Ver gráfico" : "Ver tabela";
+  if (!tabela) desenhar();
+});
+
+// --- tabela de produtos
+const spark = vals => {
+  const v = vals.map((a, i) => [i, a]).filter(p => p[1] != null);
+  if (v.length < 2) return "";
+  const lo = Math.min(...v.map(p => p[1])), hi = Math.max(...v.map(p => p[1])), n = vals.length - 1;
+  const pts = v.map(([i, a]) => `${(i / n * 86 + 2).toFixed(1)},${(hi === lo ? 12 : 21 - (a - lo) / (hi - lo) * 18).toFixed(1)}`).join(" ");
+  return `<svg class="spark" viewBox="0 0 90 24" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--s1)" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+};
+const tab = document.getElementById("tab");
+tab.innerHTML = `<tr><th>Produto</th>${D.lojas.map(l => `<th>${esc(l.nome)}</th>`).join("")}<th>Var. dia</th><th>Tendência</th></tr>` +
+  D.produtos.map(p => {
+    const custos = D.lojas.map(l => p.lojas[l.id]?.custo).filter(v => v != null);
+    const mn = Math.min(...custos);
+    const s = p.serie, prev = s.length > 1 ? s.at(-2) : null;
+    return `<tr><td>${esc(p.nome)} <span class="u">/${esc(p.unidade)}</span></td>` +
+      D.lojas.map(l => {
+        const o = p.lojas[l.id];
+        if (!o) return `<td class="flat">—</td>`;
+        const t = `${esc(o.nome)} — ${eur(o.preco)}`;
+        return `<td class="${custos.length > 1 && o.custo === mn ? "min" : ""}"><a href="${esc(o.url)}" title="${t}" target="_blank" rel="noopener">${eur(o.custo)}</a>${o.promo ? '<span class="tag">promo</span>' : ""}</td>`;
+      }).join("") +
+      `<td>${prev != null && s.at(-1) != null ? pct((s.at(-1) / prev - 1) * 100) : pct(null)}</td><td>${spark(s)}</td></tr>`;
+  }).join("");
+
+if (D.falhas.length) {
+  const f = document.getElementById("falhas"); f.hidden = false;
+  f.querySelector("ul").innerHTML = D.falhas.map(x => `<li>${esc(x)}</li>`).join("");
+}
+</script>
+</body>
+</html>

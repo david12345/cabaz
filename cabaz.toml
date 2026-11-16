@@ -1,0 +1,198 @@
+# Cabaz de alimentos base monitorizado diariamente.
+#
+# Cada [[produto]] é pesquisado em cada supermercado. Dos resultados,
+# ficam apenas os que contêm TODAS as palavras de `incluir` e NENHUMA de
+# `excluir` (sem distinguir maiúsculas/acentos) e cujo preço unitário está
+# na `unidade` indicada (kg, L, un). Escolhe-se o mais barato por unidade.
+#
+# Para seguir sempre o mesmo produto numa loja, fixe o seu código:
+#   fixo = { continente = "4421406", auchan = "3010402", pingodoce = "48150" }
+
+[[produto]]
+nome = "Leite UHT meio-gordo"
+procura = "leite uht meio gordo"
+incluir = ["leite", "meio gordo"]
+excluir = ["chocolate", "sem lactose", "bio", "achocolatado", "proteina", "magro", "cafe"]
+unidade = "L"
+
+[[produto]]
+nome = "Ovos (classe M/L)"
+procura = "ovos"
+incluir = ["ovos"]
+excluir = ["classe s", "chocolate", "codorniz", "pascoa", "liquid", "clara", "gema", "massa", "bio", "kinder"]
+unidade = "un"
+
+[[produto]]
+nome = "Arroz carolino"
+procura = "arroz carolino"
+incluir = ["arroz", "carolino"]
+excluir = ["doce", "pronto", "micro", "bio", "integral"]
+unidade = "kg"
+
+[[produto]]
+nome = "Esparguete"
+procura = "esparguete"
+incluir = ["esparguete"]
+excluir = ["integral", "sem gluten", "molho", "pronto", "bio", "fresco", "leguminosa", "lentilha", "grao"]
+unidade = "kg"
+
+[[produto]]
+nome = "Açúcar branco"
+procura = "açúcar"
+incluir = ["acucar", "branco"]
+excluir = ["mascavado", "amarelo", "pacotes", "stick", "saquetas", "baunilha", "glace", "pasta", "em po", "cana", "bio", "sem acucar", "confeitaria", "zero", "sem ", "farinha", "iogurte", "cacau", "bolacha", "refrigerante", "bebida"]
+unidade = "kg"
+
+[[produto]]
+nome = "Farinha de trigo"
+procura = "farinha trigo tipo 65"
+incluir = ["farinha"]
+excluir = ["com fermento", "fermento quimico", "milho", "integral", "centeio", "sem gluten", "aveia", "arroz", "bio", "pizza", "bolo", "pao", "grao", "amendoa"]
+unidade = "kg"
+
+[[produto]]
+nome = "Azeite virgem extra"
+procura = "azeite virgem extra"
+incluir = ["azeite", "virgem extra"]
+excluir = ["spray", "bio", "aromatizado", "alho", "malagueta", "limao", "trufa", "garrafa vidro 250", "atum", "sardinha"]
+unidade = "L"
+
+[[produto]]
+nome = "Óleo alimentar"
+procura = "oleo alimentar"
+incluir = ["oleo"]
+excluir = ["spray", "coco", "sesamo", "amendoim", "massagem", "corpo", "bebe", "motor", "atum", "sardinha", "cavala"]
+unidade = "L"
+
+[[produto]]
+nome = "Manteiga com sal"
+procura = "manteiga com sal"
+incluir = ["manteiga"]
+excluir = ["amendoim", "cacau", "sem sal", "alho", "ervas", "biscoito", "bolacha", "magra", "barrar", "vegetal", "ghee", "caju", "amendoa"]
+unidade = "kg"
+
+[[produto]]
+nome = "Frango inteiro"
+procura = "frango inteiro"
+incluir = ["frango", "inteiro"]
+excluir = ["assado", "piri", "temperado", "churrasco", "bio", "campo", "pato", "peru", "perna", "coxa", "peito", "asa"]
+unidade = "kg"
+
+[[produto]]
+nome = "Carne de porco (lombo)"
+procura = "lombo de porco"
+incluir = ["lombo", "porco"]
+excluir = ["fumado", "assado", "fatiado", "cozido", "panado", "preto", "iberico", "bio", "marinado", "temperado", "bifinhos", "bifes", "costeletas", "fatias", "roti", "recheado", "medalhoes", "cachaco", "panar", "enrolar", "finissimo", "bisaro"]
+unidade = "kg"
+
+[[produto]]
+nome = "Carne de vaca picada"
+procura = "carne picada novilho"
+incluir = ["picad"]
+excluir = ["porco", "frango", "peru", "mista", "hamburguer", "vegetal", "soja", "bio", "almondega"]
+unidade = "kg"
+
+[[produto]]
+nome = "Pescada congelada"
+procura = "pescada congelada"
+incluir = ["pescada"]
+excluir = ["panad", "douradinhos", "nuggets", "molho", "pronto", "filetes de", "medalhoes", "hamburguer", "lombo", "barrinhas", "sem gluten", "cabeca", "postas de", "lascas"]
+unidade = "kg"
+
+[[produto]]
+nome = "Bacalhau"
+procura = "bacalhau graudo"
+incluir = ["bacalhau"]
+excluir = ["desfiado", "pastel", "pasteis", "bolinhos", "pronto", "bras", "natas", "lascas", "migas", "posta", "lombo", "ultracongelado", "demolhado"]
+unidade = "kg"
+
+[[produto]]
+nome = "Atum em óleo"
+procura = "atum em oleo vegetal"
+incluir = ["atum"]
+excluir = ["azeite", "salada", "patê", "pate", "molho", "picante", "ventresca", "natural", "fresco", "congelado"]
+unidade = "kg"
+
+[[produto]]
+nome = "Batata"
+procura = "batata"
+incluir = ["batata"]
+excluir = ["doce", "frita", "chips", "pala", "congelad", "pure", "palha", "pre-frita", "cozida", "nova", "assada", "fritas", "bio", "rodelas", "aperitivo", "snack"]
+unidade = "kg"
+
+[[produto]]
+nome = "Cebola"
+procura = "cebola"
+incluir = ["cebola"]
+excluir = ["roxa", "frita", "picada", "congelad", "pickles", "doce", "molho", "bio", "sopa", "aneis", "desidratada", "em po", "nova", "alho"]
+unidade = "kg"
+
+[[produto]]
+nome = "Cenoura"
+procura = "cenoura"
+incluir = ["cenoura"]
+excluir = ["ralada", "baby", "congelad", "sumo", "bolo", "bio", "palitos", "pure", "creme", "sopa", "rodelas", "baton", "cubos", "mini"]
+unidade = "kg"
+
+[[produto]]
+nome = "Tomate"
+procura = "tomate"
+incluir = ["tomate"]
+excluir = ["cherry", "pelado", "polpa", "concentrado", "molho", "seco", "ketchup", "sumo", "triturado", "bio", "frito", "passata", "cubos", "sopa", "pedacos", "pelado", "beans", "feijao", "mini", "cereja", "arroz", "massa"]
+unidade = "kg"
+
+[[produto]]
+nome = "Banana"
+procura = "banana"
+incluir = ["banana"]
+excluir = ["chips", "seca", "sumo", "iogurte", "papa", "bolo", "bio", "baby", "leite", "batido", "pure", "smoothie", "desidratada", "pao", "barra", "cereais", "pacotinho", "saqueta", "gomas", "pastilha", "cookie", "split", "slipt", "mola", "cake", "rodelas", "panqueca", "chocolate", "gelado"]
+unidade = "kg"
+
+[[produto]]
+nome = "Maçã"
+procura = "maçã gala"
+incluir = ["maca"]
+excluir = ["sumo", "chips", "seca", "pure", "compota", "vinagre", "iogurte", "bolo", "bio", "desidratada", "canela", "tarte", "nectar", "pacote", "baby", "snack", "cidra"]
+unidade = "kg"
+
+[[produto]]
+nome = "Iogurte natural"
+procura = "iogurte natural"
+incluir = ["iogurte", "natural"]
+excluir = ["grego", "magro", "aroma", "liquido", "bifidus", "proteina", "vegetal", "soja", "coco", "bio", "sem lactose", "acucarado", "skyr", "kefir"]
+unidade = "kg"
+
+[[produto]]
+nome = "Queijo flamengo fatiado"
+procura = "queijo flamengo fatias"
+incluir = ["flamengo"]
+excluir = ["light", "magro", "ralado", "bola", "barra", "bio", "sem lactose", "cubos", "vegetal", "fiambre", "tosta", "sandes"]
+unidade = "kg"
+
+[[produto]]
+nome = "Fiambre"
+procura = "fiambre fatias"
+incluir = ["fiambre"]
+excluir = ["peru", "frango", "light", "bio", "queijo", "tosta", "pizza", "sandes", "croissant", "folhado", "lasanha"]
+unidade = "kg"
+
+[[produto]]
+nome = "Feijão (lata/frasco)"
+procura = "feijao cozido"
+incluir = ["feijao"]
+excluir = ["verde", "seco", "congelad", "chili", "bio", "sopa", "salada", "frade", "tremocos", "soja", "feijoada", "dobrada", "grao"]
+unidade = "kg"
+
+[[produto]]
+nome = "Café moído"
+procura = "cafe moido"
+incluir = ["cafe", "moido"]
+excluir = ["descafeinado", "capsula", "soluvel", "bio", "graos", "grao", "cevada", "chicoria", "pastilha"]
+unidade = "kg"
+
+[[produto]]
+nome = "Pão de forma"
+procura = "pao de forma"
+incluir = ["pao", "forma"]
+excluir = ["integral", "sem gluten", "sem codea", "brioche", "bio", "cereais", "centeio", "sementes", "milho", "proteina", "aveia", "torrado", "tostas", "hamburguer", "cachorro", "leite"]
+unidade = "kg"
