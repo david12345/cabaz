@@ -26,6 +26,22 @@ Agente que, todos os dias, **pesquisa** os supermercados online portugueses
 O custo de referência de cada produto é o preço por kg ou litro (ovos: dúzia).
 Se uma loja falhar num dia, usa-se o último preço conhecido e a falha aparece nos avisos.
 
+## Verificação automática (alertas)
+
+Depois de cada recolha, `cabaz/verificacao.py` confere a qualidade dos dados:
+
+| Situação | O que acontece |
+|---|---|
+| Faltam mais de 10% dos preços, ou uma loja não devolveu nenhum | ❌ O workflow fica vermelho (o GitHub envia email) e é aberta uma issue. Os preços recolhidos são gravados à mesma. |
+| Um preço por kg/L varia mais de 30% face à recolha anterior | ⚠️ É aberta uma issue `Alertas do cabaz: AAAA-MM-DD` (o GitHub envia email). |
+| A loja passou a ter outro produto como o mais barato | 🔄 Listado na issue e no relatório, mas sozinho não abre issue. |
+
+Os alertas aparecem também no `RELATORIO.md` e na página. Os limites ajustam-se em
+`cabaz.toml`, na secção `[verificacao]`. Para receber os emails das issues, o repositório
+tem de estar em *Watch → All activity* (ou *Custom → Issues*).
+
+Para verificar à mão a última recolha: `python -m cabaz.verificacao`.
+
 ## Execução automática
 
 O workflow [`.github/workflows/cabaz-diario.yml`](.github/workflows/cabaz-diario.yml)

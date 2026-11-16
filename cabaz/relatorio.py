@@ -83,10 +83,14 @@ def _valor_em(datas, valores, alvo: str):
 
 
 def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None = None) -> None:
+    from . import verificacao
+
     falhas = falhas or []
     if not historico:
         return
     ordem, datas, lojas, custo, real = series(historico, produtos)
+    limites = verificacao.carregar_limites()
+    verif = verificacao.verificar(historico, produtos, list(LOJAS_NOMES), limites)
     por_loja, melhor = totais(ordem, datas, lojas, custo)
     hoje = datas[-1]
     ontem = datas[-2] if len(datas) > 1 else None
@@ -163,6 +167,7 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
     else:
         L.append("Sem variações (ou ainda só há um dia de histórico).")
     L.append("")
+    L += ["## Verificação automática", "", verificacao.markdown(verif, limites)]
     if falhas:
         L += ["## Avisos da recolha", ""] + [f"- {f}" for f in falhas] + [""]
     L += ["---", f"Histórico completo: [`data/precos.csv`](data/precos.csv) · "
@@ -190,6 +195,11 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
             for p in ordem
         ],
         "falhas": falhas,
+        "alertas": verif.criticos + [
+            f"{s['produto']} @ {s['loja']}: {_eur(s['antes'])} → {_eur(s['depois'])}/{s['unidade']} "
+            f"({s['variacao'] * 100:+.0f}%)" + (f" — produto trocado para {s['nome_depois']}" if s["trocou"] else "")
+            for s in verif.suspeitos
+        ],
     }
     modelo = (Path(__file__).parent / "modelo.html").read_text(encoding="utf-8")
     html = modelo.replace("/*__DADOS__*/null", json.dumps(dados, ensure_ascii=False).replace("</", "<\\/"))

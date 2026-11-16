@@ -51,5 +51,11 @@ Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; c
 
 Sem variações (ou ainda só há um dia de histórico).
 
+## Verificação automática
+
+Verificação da recolha de **2026-11-16** (cobertura 81/81 = 100%).
+
+✅ Sem problemas.
+
 ---
 Histórico completo: [`data/precos.csv`](data/precos.csv) · Gráfico interativo: [`docs/index.html`](docs/index.html) · 1 dia(s) registado(s).

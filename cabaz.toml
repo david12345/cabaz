@@ -8,6 +8,15 @@
 # Para seguir sempre o mesmo produto numa loja, fixe o seu código:
 #   fixo = { continente = "4421406", auchan = "3010402", pingodoce = "48150" }
 
+# Verificação diária da recolha (ver cabaz/verificacao.py):
+#  - abaixo de `cobertura_minima` dos preços esperados, ou uma loja sem preços,
+#    o workflow falha (o GitHub envia email);
+#  - uma variação de preço por kg/L acima de `variacao_suspeita` face à recolha
+#    anterior abre uma issue no GitHub.
+[verificacao]
+cobertura_minima = 0.90
+variacao_suspeita = 0.30
+
 [[produto]]
 nome = "Leite UHT meio-gordo"
 procura = "leite uht meio gordo"

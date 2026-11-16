@@ -92,6 +92,9 @@ td.min { background: var(--hl); font-weight: 650; }
     <p class="note">Preço por kg/L/dúzia da opção mais barata em cada loja. Destacado = mais barato. Passe o rato sobre um preço para ver o produto.</p>
   </section>
 
+  <section class="card warn" id="alertas" hidden><h2>⚠️ Alertas da verificação</h2><ul></ul>
+    <p class="note">Variações grandes são quase sempre trocas de produto ou erros de leitura — confirme no site da loja.</p></section>
+
   <section class="card warn" id="falhas" hidden><h2>Avisos da última recolha</h2><ul></ul></section>
 </main>
 <script>
@@ -209,6 +212,10 @@ tab.innerHTML = `<tr><th>Produto</th>${D.lojas.map(l => `<th>${esc(l.nome)}</th>
       `<td>${prev != null && s.at(-1) != null ? pct((s.at(-1) / prev - 1) * 100) : pct(null)}</td><td>${spark(s)}</td></tr>`;
   }).join("");
 
+if ((D.alertas || []).length) {
+  const a = document.getElementById("alertas"); a.hidden = false;
+  a.querySelector("ul").innerHTML = D.alertas.map(x => `<li>${esc(x)}</li>`).join("");
+}
 if (D.falhas.length) {
   const f = document.getElementById("falhas"); f.hidden = false;
   f.querySelector("ul").innerHTML = D.falhas.map(x => `<li>${esc(x)}</li>`).join("");
