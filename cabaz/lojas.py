@@ -89,6 +89,11 @@ def quantidade_embalagem(nome: str) -> tuple[float | None, str | None]:
     return round(mult * float(valor.replace(",", ".")) / fator, 4), nome_un
 
 
+class Bloqueado(RuntimeError):
+    """A loja recusou o pedido (HTTP 403/429): bloqueio anti-robô, normalmente pelo
+    endereço IP. Repetir do mesmo IP não ajuda, por isso não se tenta de novo."""
+
+
 class Loja:
     nome = ""
     base = ""
@@ -114,6 +119,8 @@ class Loja:
         for i in range(tentativas):
             try:
                 r = self.s.get(url, timeout=40)
+                if r.status_code in (403, 429):
+                    raise Bloqueado(f"{self.nome}: bloqueado (HTTP {r.status_code}) em '{termo}'")
                 r.raise_for_status()
                 time.sleep(self.pausa)
                 ofertas = self.interpretar(r.text)
@@ -123,6 +130,8 @@ class Loja:
                         if q:
                             o.preco_unidade, o.unidade = round(o.preco / q, 4), un
                 return ofertas
+            except Bloqueado:
+                raise
             except Exception as e:  # rede ou HTML inesperado
                 erro = e
                 time.sleep(3 * (i + 1))
