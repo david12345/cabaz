@@ -1,6 +1,8 @@
 # Cabaz de alimentos base — 2026-11-21
 
-Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; custo de referência = preço por kg/L (ovos: dúzia). Em cada loja escolhe-se a opção mais barata que cumpre os critérios de `cabaz.toml`.
+Outros cabazes: [Cabaz extra](RELATORIO-extra.md)
+
+Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; custo de referência = preço por kg/L (à unidade: dúzia). Em cada loja escolhe-se a opção mais barata que cumpre os critérios de `cabaz.toml`.
 
 ## Custo do cabaz
 
