@@ -7,7 +7,7 @@ from collections import defaultdict
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
-LOJAS_NOMES = {"continente": "Continente", "pingodoce": "Pingo Doce", "auchan": "Auchan"}
+from .lojas import NOMES as LOJAS_NOMES, PARCIAIS
 UNID_REF = {"kg": "kg", "L": "L", "un": "un"}
 
 
@@ -32,7 +32,8 @@ def _fmt_pct(p: float | None) -> str:
 
 def series(historico: list[dict], produtos: list[dict]):
     """Custos por (produto, loja) ao longo das datas, com o último valor conhecido
-    propagado para dias em que a recolha falhou."""
+    propagado para dias em que a recolha falhou (exceto em lojas parciais, onde a
+    falta de preço é normal e propagar um preço de promoção seria enganador)."""
     ordem = [p["nome"] for p in produtos]
     datas = sorted({l["data"] for l in historico})
     lojas = [l for l in LOJAS_NOMES if any(h["loja"] == l for h in historico)]
@@ -50,7 +51,7 @@ def series(historico: list[dict], produtos: list[dict]):
                 if linha:
                     ultimo[(prod, loja)] = float(linha["custo_ref"])
                     real[d][(prod, loja)] = linha
-                if (prod, loja) in ultimo:
+                if (prod, loja) in ultimo and (linha or loja not in PARCIAIS):
                     custo[d][(prod, loja)] = ultimo[(prod, loja)]
     return ordem, datas, lojas, custo, real
 
@@ -59,8 +60,10 @@ def totais(ordem, datas, lojas, custo):
     """Total do cabaz por loja e 'melhor preço' (mínimo entre lojas) por data.
 
     Só conta um total de loja quando essa loja tem preço para todos os produtos;
-    o 'melhor cabaz' usa os produtos com preço em pelo menos uma loja."""
-    por_loja = {loja: [] for loja in lojas}
+    o 'melhor cabaz' usa os produtos com preço em pelo menos uma loja.
+    Lojas parciais (ex.: Lidl) não entram em nenhum dos totais."""
+    por_loja = {loja: [None] * len(datas) if loja in PARCIAIS else [] for loja in lojas}
+    lojas = [l for l in lojas if l not in PARCIAIS]
     melhor = []
     for d in datas:
         c = custo[d]
@@ -73,6 +76,16 @@ def totais(ordem, datas, lojas, custo):
     return por_loja, melhor
 
 
+def _mudancas(nomes: list[str | None]) -> list[list]:
+    """['A', 'A', None, 'B'] -> [[0, 'A'], [3, 'B']] (compacto para a página)."""
+    res, ultimo = [], None
+    for i, n in enumerate(nomes):
+        if n and n != ultimo:
+            res.append([i, n])
+            ultimo = n
+    return res
+
+
 def _valor_em(datas, valores, alvo: str):
     """Valor na última data <= alvo."""
     res = None
@@ -83,10 +96,15 @@ def _valor_em(datas, valores, alvo: str):
 
 
 def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None = None) -> None:
+    from . import verificacao
+
     falhas = falhas or []
     if not historico:
         return
     ordem, datas, lojas, custo, real = series(historico, produtos)
+    limites = verificacao.carregar_limites()
+    verif = verificacao.verificar(historico, produtos, list(LOJAS_NOMES), limites, parciais=PARCIAIS)
+    completas = [l for l in lojas if l not in PARCIAIS]
     por_loja, melhor = totais(ordem, datas, lojas, custo)
     hoje = datas[-1]
     ontem = datas[-2] if len(datas) > 1 else None
@@ -102,7 +120,7 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
 
     # variações por produto (melhor preço entre lojas)
     def melhor_prod(d, p):
-        vals = [custo[d][(p, l)] for l in lojas if (p, l) in custo[d]]
+        vals = [custo[d][(p, l)] for l in completas if (p, l) in custo[d]]
         return min(vals) if vals else None
 
     movimentos = []
@@ -123,13 +141,17 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
              "Em cada loja escolhe-se a opção mais barata que cumpre os critérios de `cabaz.toml`.")
     L += ["", "## Custo do cabaz", "", "| | Hoje | vs ontem | vs 7 dias | vs 30 dias | vs início |", "|---|---:|---:|---:|---:|---:|"]
     linhas_tot = [("**Melhor preço** (loja mais barata em cada produto)", melhor)] + \
-                 [(LOJAS_NOMES[l], por_loja[l]) for l in lojas]
+                 [(LOJAS_NOMES[l], por_loja[l]) for l in completas]
     for nome, vals in linhas_tot:
         atual = vals[-1]
         cel = [_fmt_pct(_pct(atual, _valor_em(datas[:-1], vals[:-1], r))) if r else "—" for r in ref.values()]
         L.append(f"| {nome} | {_eur(atual)} | " + " | ".join(cel) + " |")
     L += ["", "> Total de loja só aparece quando a loja tem preço para todos os produtos nesse dia "
-          "(falhas pontuais usam o último preço conhecido).", ""]
+          "(falhas pontuais usam o último preço conhecido)."]
+    if PARCIAIS & set(lojas):
+        L += [f"> {', '.join(LOJAS_NOMES[l] for l in lojas if l in PARCIAIS)}: só tem online os produtos em "
+              "destaque/promoção da semana, por isso aparece nos preços mas não nos totais nem no melhor preço."]
+    L.append("")
 
     L += ["## Preços de hoje", "", "| Produto | " + " | ".join(LOJAS_NOMES[l] for l in lojas) + " | Var. dia (melhor) |",
           "|---|" + "---:|" * len(lojas) + "---:|"]
@@ -153,7 +175,8 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
         var = _fmt_pct(_pct(melhor_prod(hoje, p), melhor_prod(ontem, p))) if ontem else "—"
         rot = f"{p} (/{'dúzia' if unid[p] == 'un' and qtd[p] == 12 else UNID_REF[unid[p]]})"
         L.append(f"| {rot} | " + " | ".join(cels) + f" | {var} |")
-    L += ["", "**Negrito** = mais barato; 🏷 = em promoção.", ""]
+    L += ["", "**Negrito** = mais barato (todas as lojas); 🏷 = em promoção. "
+          "Evolução por produto: ver a [página interativa](docs/index.html).", ""]
 
     L += ["## Maiores variações desde ontem", ""]
     if movimentos:
@@ -163,6 +186,7 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
     else:
         L.append("Sem variações (ou ainda só há um dia de histórico).")
     L.append("")
+    L += ["## Verificação automática", "", verificacao.markdown(verif, limites)]
     if falhas:
         L += ["## Avisos da recolha", ""] + [f"- {f}" for f in falhas] + [""]
     L += ["---", f"Histórico completo: [`data/precos.csv`](data/precos.csv) · "
@@ -173,7 +197,7 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
     dados = {
         "hoje": hoje,
         "datas": datas,
-        "lojas": [{"id": l, "nome": LOJAS_NOMES[l], "totais": por_loja[l]} for l in lojas],
+        "lojas": [{"id": l, "nome": LOJAS_NOMES[l], "totais": por_loja[l], "parcial": l in PARCIAIS} for l in lojas],
         "melhor": melhor,
         "variacoes": {k: _pct(melhor[-1], _valor_em(datas[:-1], melhor[:-1], r)) if r else None for k, r in ref.items()},
         "produtos": [
@@ -181,6 +205,12 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
                 "nome": p,
                 "unidade": "dúzia" if unid[p] == "un" and qtd[p] == 12 else unid[p],
                 "serie": [melhor_prod(d, p) for d in datas],
+                # preços reais por loja em cada data (None = sem preço nesse dia)
+                "hist": {l: [round(float(v["custo_ref"]), 4) if (v := real[d].get((p, l))) else None for d in datas]
+                         for l in lojas},
+                # produto escolhido: só as mudanças, como [índice da data, nome]
+                "escolhas": {l: _mudancas([(real[d].get((p, l)) or {}).get("nome_loja") for d in datas])
+                             for l in lojas},
                 "lojas": {
                     l: ({"custo": float(v["custo_ref"]), "preco": float(v["preco"]), "nome": v["nome_loja"],
                          "url": v["url"], "promo": v.get("promocao") == "1"} if (v := real[hoje].get((p, l))) else None)
@@ -190,6 +220,11 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
             for p in ordem
         ],
         "falhas": falhas,
+        "alertas": verif.criticos + [
+            f"{s['produto']} @ {s['loja']}: {_eur(s['antes'])} → {_eur(s['depois'])}/{s['unidade']} "
+            f"({s['variacao'] * 100:+.0f}%)" + (f" — produto trocado para {s['nome_depois']}" if s["trocou"] else "")
+            for s in verif.suspeitos
+        ],
     }
     modelo = (Path(__file__).parent / "modelo.html").read_text(encoding="utf-8")
     html = modelo.replace("/*__DADOS__*/null", json.dumps(dados, ensure_ascii=False).replace("</", "<\\/"))

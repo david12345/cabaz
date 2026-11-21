@@ -6,7 +6,8 @@ on:
   workflow_dispatch: {}     # permite correr à mão no separador Actions
 
 permissions:
-  contents: write
+  contents: write   # gravar os dados no repositório
+  issues: write     # abrir issues com alertas
 
 concurrency:
   group: cabaz-diario
@@ -44,6 +45,34 @@ jobs:
             git push
           fi
 
+      - name: Verificar qualidade da recolha
+        id: verif
+        run: python -m cabaz.verificacao --saida "$RUNNER_TEMP/verificacao"
+
+      - name: Abrir issue com alertas
+        if: steps.verif.outputs.critico == 'true' || steps.verif.outputs.suspeito == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DATA: ${{ steps.verif.outputs.data }}
+          CORPO: ${{ runner.temp }}/verificacao/issue.md
+        run: |
+          titulo="Alertas do cabaz: $DATA"
+          echo "" >> "$CORPO"
+          echo "Execução: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> "$CORPO"
+          gh label create alerta-cabaz --color D93F0B --description "Alertas automáticos da recolha de preços" --force
+          num=$(gh issue list --state open --label alerta-cabaz --search "in:title \"$titulo\"" --json number --jq '.[0].number')
+          if [ -n "$num" ]; then
+            gh issue comment "$num" --body-file "$CORPO"
+          else
+            gh issue create --title "$titulo" --label alerta-cabaz --body-file "$CORPO"
+          fi
+
       - name: Resumo
         if: always()
         run: test -f RELATORIO.md && cat RELATORIO.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Falhar se houver problemas críticos
+        if: steps.verif.outputs.critico == 'true'
+        run: |
+          echo "::error::Recolha incompleta — ver a issue 'Alertas do cabaz: ${{ steps.verif.outputs.data }}' e o RELATORIO.md"
+          exit 1

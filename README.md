@@ -1,13 +1,23 @@
 # Cabaz — monitor diário de preços de alimentos base
 
 Agente que, todos os dias, **pesquisa** os supermercados online portugueses
-(Continente, Pingo Doce e Auchan), escolhe em cada um a opção mais barata de
-27 alimentos essenciais e **monitoriza** a evolução do custo do cabaz.
+(Continente, Pingo Doce, Auchan e Lidl), escolhe em cada um a opção mais barata de
+27 alimentos essenciais e **monitoriza** a evolução do custo do cabaz e de cada produto.
 
 - 📊 **Relatório do dia:** [`RELATORIO.md`](RELATORIO.md)
-- 📈 **Gráfico interativo:** [`docs/index.html`](docs/index.html) (ative o GitHub Pages em
+- 📈 **Página interativa:** [`docs/index.html`](docs/index.html) — evolução do cabaz e
+  **evolução por produto** (escolha o produto na lista ou clique no nome na tabela;
+  o endereço `…/#Bacalhau` abre diretamente esse produto) (ative o GitHub Pages em
   *Settings → Pages → Branch: main, pasta `/docs`* para o ver online)
 - 🗃️ **Histórico completo:** [`data/precos.csv`](data/precos.csv)
+
+## Lojas
+
+| Loja | Fonte | Cobertura |
+|---|---|---|
+| Continente, Pingo Doce, Auchan | Pesquisa da loja online | Cabaz completo |
+| Lidl | API de pesquisa de lidl.pt | **Parcial**: o Lidl não vende alimentação online, e o site só mostra preço dos produtos em destaque/promoção da semana (na semana de 16/11, 6 dos 27). Aparece nas tabelas e na evolução por produto, mas **não entra nos totais nem no "melhor preço"**, nem no alerta de cobertura. |
+| Mercadona | — | **Não incluída**: não tem loja online em Portugal (a de Espanha tem preços espanhóis) e o site mercadona.pt bloqueia acessos automáticos. |
 
 ## Como funciona
 
@@ -25,6 +35,22 @@ Agente que, todos os dias, **pesquisa** os supermercados online portugueses
 
 O custo de referência de cada produto é o preço por kg ou litro (ovos: dúzia).
 Se uma loja falhar num dia, usa-se o último preço conhecido e a falha aparece nos avisos.
+
+## Verificação automática (alertas)
+
+Depois de cada recolha, `cabaz/verificacao.py` confere a qualidade dos dados:
+
+| Situação | O que acontece |
+|---|---|
+| Faltam mais de 10% dos preços, ou uma loja não devolveu nenhum | ❌ O workflow fica vermelho (o GitHub envia email) e é aberta uma issue. Os preços recolhidos são gravados à mesma. |
+| Um preço por kg/L varia mais de 30% face à recolha anterior | ⚠️ É aberta uma issue `Alertas do cabaz: AAAA-MM-DD` (o GitHub envia email). |
+| A loja passou a ter outro produto como o mais barato | 🔄 Listado na issue e no relatório, mas sozinho não abre issue. |
+
+Os alertas aparecem também no `RELATORIO.md` e na página. Os limites ajustam-se em
+`cabaz.toml`, na secção `[verificacao]`. Para receber os emails das issues, o repositório
+tem de estar em *Watch → All activity* (ou *Custom → Issues*).
+
+Para verificar à mão a última recolha: `python -m cabaz.verificacao`.
 
 ## Execução automática
 
