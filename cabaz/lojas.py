@@ -97,10 +97,6 @@ class Bloqueado(RuntimeError):
 class Loja:
     nome = ""
     base = ""
-    # Loja parcial: não tem o catálogo completo online. Aparece nas tabelas e na
-    # evolução por produto, mas fica fora dos totais do cabaz, do "melhor preço"
-    # e do alerta de cobertura.
-    parcial = False
 
     def __init__(self, sessao: requests.Session | None = None, pausa: float = 1.5):
         self.s = sessao or requests.Session()
@@ -263,52 +259,5 @@ class PingoDoce(Loja):
         return ofertas
 
 
-class Lidl(Loja):
-    """Lidl Portugal: não tem loja online de alimentação. A API de pesquisa do
-    site só devolve produtos em destaque (folheto/promoções da semana) e alguns
-    permanentes, por isso a cobertura do cabaz é parcial e varia de semana para semana."""
-
-    nome = "lidl"
-    base = "https://www.lidl.pt"
-    parcial = True
-
-    def url_pesquisa(self, termo):
-        return (f"{self.base}/q/api/search?q={quote_plus(termo)}"
-                "&assortment=PT&locale=pt_PT&version=v2.0.0&fetchsize=48")
-
-    def interpretar(self, html):
-        try:
-            dados = json.loads(html)
-        except ValueError:
-            return []
-        ofertas = []
-        for item in dados.get("items", []):
-            g = (item.get("gridbox") or {}).get("data") or {}
-            pr = g.get("price") or {}
-            preco = pr.get("price")
-            if not preco:
-                continue
-            emb = (pr.get("packaging") or {}).get("text") or ""
-            base = (pr.get("basePrice") or {}).get("text") or ""  # "1 kg = 9,98"
-            pu, un = None, None
-            m = re.match(r"\s*(\d+(?:[.,]\d+)?)?\s*(kg|g|l|ml|un)\w*\s*=\s*(\d+(?:[.,]\d+)?)", normalizar(base))
-            if m and m.group(2) in _UNIDADES:
-                nome_un, fator = _UNIDADES[m.group(2)]
-                qtd = float((m.group(1) or "1").replace(",", ".")) / fator
-                pu, un = round(float(m.group(3).replace(",", ".")) / qtd, 4), nome_un
-            elif re.search(r"\b(por|ao) kg\b|/\s*kg|^kg$", normalizar(emb)):
-                pu, un = float(preco), "kg"
-            titulo = g.get("fullTitle") or g.get("title") or ""
-            ofertas.append(Oferta(
-                loja=self.nome, pid=str(g.get("productId") or g.get("erpNumber") or item.get("code")),
-                nome=f"{titulo} ({emb})" if emb else titulo, preco=float(preco),
-                preco_unidade=pu, unidade=un,
-                url=urljoin(self.base, g.get("canonicalUrl") or ""),
-                promocao=bool((pr.get("discount") or {}).get("showDiscount")),
-            ))
-        return ofertas
-
-
-LOJAS = {c.nome: c for c in (Continente, PingoDoce, Auchan, Lidl)}
-PARCIAIS = {n for n, c in LOJAS.items() if c.parcial}
-NOMES = {"continente": "Continente", "pingodoce": "Pingo Doce", "auchan": "Auchan", "lidl": "Lidl"}
+LOJAS = {c.nome: c for c in (Continente, PingoDoce, Auchan)}
+NOMES = {"continente": "Continente", "pingodoce": "Pingo Doce", "auchan": "Auchan"}

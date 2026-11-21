@@ -1,7 +1,7 @@
 # Cabaz — monitor diário de preços de alimentos base
 
 Agente que, todos os dias, **pesquisa** os supermercados online portugueses
-(Continente, Pingo Doce, Auchan e Lidl), escolhe em cada um a opção mais barata de
+(Continente, Pingo Doce e Auchan), escolhe em cada um a opção mais barata de
 27 alimentos essenciais e **monitoriza** a evolução do custo do cabaz e de cada produto.
 
 - 📊 **Relatório do dia:** [`RELATORIO.md`](RELATORIO.md)
@@ -16,7 +16,7 @@ Agente que, todos os dias, **pesquisa** os supermercados online portugueses
 | Loja | Fonte | Cobertura |
 |---|---|---|
 | Continente, Pingo Doce, Auchan | Pesquisa da loja online | Cabaz completo |
-| Lidl | API de pesquisa de lidl.pt | **Parcial**: o Lidl não vende alimentação online, e o site só mostra preço dos produtos em destaque/promoção da semana (na semana de 16/11, 6 dos 27). Aparece nas tabelas e na evolução por produto, mas **não entra nos totais nem no "melhor preço"**, nem no alerta de cobertura. |
+| Lidl | — | **Não incluído**: não vende alimentação online e o site só mostra preço dos produtos em promoção da semana (6–12 dos 27), com resultados pouco fiáveis (ex.: "cebola" devolvia um hambúrguer com cebola). Testado de 16 a 21/11/2026 e retirado. |
 | Mercadona | — | **Não incluída**: não tem loja online em Portugal (a de Espanha tem preços espanhóis) e o site mercadona.pt bloqueia acessos automáticos. |
 
 ## Como funciona

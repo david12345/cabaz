@@ -7,7 +7,7 @@ from collections import defaultdict
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
-from .lojas import NOMES as LOJAS_NOMES, PARCIAIS
+from .lojas import NOMES as LOJAS_NOMES
 UNID_REF = {"kg": "kg", "L": "L", "un": "un"}
 
 
@@ -32,8 +32,7 @@ def _fmt_pct(p: float | None) -> str:
 
 def series(historico: list[dict], produtos: list[dict]):
     """Custos por (produto, loja) ao longo das datas, com o último valor conhecido
-    propagado para dias em que a recolha falhou (exceto em lojas parciais, onde a
-    falta de preço é normal e propagar um preço de promoção seria enganador)."""
+    propagado para dias em que a recolha falhou."""
     ordem = [p["nome"] for p in produtos]
     datas = sorted({l["data"] for l in historico})
     lojas = [l for l in LOJAS_NOMES if any(h["loja"] == l for h in historico)]
@@ -51,7 +50,7 @@ def series(historico: list[dict], produtos: list[dict]):
                 if linha:
                     ultimo[(prod, loja)] = float(linha["custo_ref"])
                     real[d][(prod, loja)] = linha
-                if (prod, loja) in ultimo and (linha or loja not in PARCIAIS):
+                if (prod, loja) in ultimo:
                     custo[d][(prod, loja)] = ultimo[(prod, loja)]
     return ordem, datas, lojas, custo, real
 
@@ -60,10 +59,8 @@ def totais(ordem, datas, lojas, custo):
     """Total do cabaz por loja e 'melhor preço' (mínimo entre lojas) por data.
 
     Só conta um total de loja quando essa loja tem preço para todos os produtos;
-    o 'melhor cabaz' usa os produtos com preço em pelo menos uma loja.
-    Lojas parciais (ex.: Lidl) não entram em nenhum dos totais."""
-    por_loja = {loja: [None] * len(datas) if loja in PARCIAIS else [] for loja in lojas}
-    lojas = [l for l in lojas if l not in PARCIAIS]
+    o 'melhor cabaz' usa os produtos com preço em pelo menos uma loja."""
+    por_loja = {loja: [] for loja in lojas}
     melhor = []
     for d in datas:
         c = custo[d]
@@ -103,8 +100,7 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
         return
     ordem, datas, lojas, custo, real = series(historico, produtos)
     limites = verificacao.carregar_limites()
-    verif = verificacao.verificar(historico, produtos, list(LOJAS_NOMES), limites, parciais=PARCIAIS)
-    completas = [l for l in lojas if l not in PARCIAIS]
+    verif = verificacao.verificar(historico, produtos, list(LOJAS_NOMES), limites)
     por_loja, melhor = totais(ordem, datas, lojas, custo)
     hoje = datas[-1]
     ontem = datas[-2] if len(datas) > 1 else None
@@ -120,7 +116,7 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
 
     # variações por produto (melhor preço entre lojas)
     def melhor_prod(d, p):
-        vals = [custo[d][(p, l)] for l in completas if (p, l) in custo[d]]
+        vals = [custo[d][(p, l)] for l in lojas if (p, l) in custo[d]]
         return min(vals) if vals else None
 
     movimentos = []
@@ -141,17 +137,13 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
              "Em cada loja escolhe-se a opção mais barata que cumpre os critérios de `cabaz.toml`.")
     L += ["", "## Custo do cabaz", "", "| | Hoje | vs ontem | vs 7 dias | vs 30 dias | vs início |", "|---|---:|---:|---:|---:|---:|"]
     linhas_tot = [("**Melhor preço** (loja mais barata em cada produto)", melhor)] + \
-                 [(LOJAS_NOMES[l], por_loja[l]) for l in completas]
+                 [(LOJAS_NOMES[l], por_loja[l]) for l in lojas]
     for nome, vals in linhas_tot:
         atual = vals[-1]
         cel = [_fmt_pct(_pct(atual, _valor_em(datas[:-1], vals[:-1], r))) if r else "—" for r in ref.values()]
         L.append(f"| {nome} | {_eur(atual)} | " + " | ".join(cel) + " |")
     L += ["", "> Total de loja só aparece quando a loja tem preço para todos os produtos nesse dia "
-          "(falhas pontuais usam o último preço conhecido)."]
-    if PARCIAIS & set(lojas):
-        L += [f"> {', '.join(LOJAS_NOMES[l] for l in lojas if l in PARCIAIS)}: só tem online os produtos em "
-              "destaque/promoção da semana, por isso aparece nos preços mas não nos totais nem no melhor preço."]
-    L.append("")
+          "(falhas pontuais usam o último preço conhecido).", ""]
 
     L += ["## Preços de hoje", "", "| Produto | " + " | ".join(LOJAS_NOMES[l] for l in lojas) + " | Var. dia (melhor) |",
           "|---|" + "---:|" * len(lojas) + "---:|"]
@@ -197,7 +189,7 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
     dados = {
         "hoje": hoje,
         "datas": datas,
-        "lojas": [{"id": l, "nome": LOJAS_NOMES[l], "totais": por_loja[l], "parcial": l in PARCIAIS} for l in lojas],
+        "lojas": [{"id": l, "nome": LOJAS_NOMES[l], "totais": por_loja[l]} for l in lojas],
         "melhor": melhor,
         "variacoes": {k: _pct(melhor[-1], _valor_em(datas[:-1], melhor[:-1], r)) if r else None for k, r in ref.items()},
         "produtos": [
