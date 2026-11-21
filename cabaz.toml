@@ -105,7 +105,7 @@ unidade = "kg"
 nome = "Pescada congelada"
 procura = "pescada congelada"
 incluir = ["pescada"]
-excluir = ["panad", "douradinhos", "nuggets", "molho", "pronto", "filetes de", "medalhoes", "hamburguer", "lombo", "barrinhas", "sem gluten", "cabeca", "postas de", "lascas"]
+excluir = ["panad", "douradinhos", "nuggets", "molho", "pronto", "filetes de", "medalhoes", "hamburguer", "lombo", "barrinhas", "sem gluten", "cabeca", "postas de", "lascas", "mimos"]
 unidade = "kg"
 
 [[produto]]
@@ -133,7 +133,7 @@ unidade = "kg"
 nome = "Cebola"
 procura = "cebola"
 incluir = ["cebola"]
-excluir = ["roxa", "frita", "picada", "congelad", "pickles", "doce", "molho", "bio", "sopa", "aneis", "desidratada", "em po", "nova", "alho"]
+excluir = ["roxa", "frita", "picada", "congelad", "pickles", "doce", "molho", "bio", "sopa", "aneis", "desidratada", "em po", "nova", "alho", "hamburguer"]
 unidade = "kg"
 
 [[produto]]
@@ -175,7 +175,7 @@ unidade = "kg"
 nome = "Queijo flamengo fatiado"
 procura = "queijo flamengo fatias"
 incluir = ["flamengo"]
-excluir = ["light", "magro", "ralado", "bola", "barra", "bio", "sem lactose", "cubos", "vegetal", "fiambre", "tosta", "sandes"]
+excluir = ["light", "magro", "ralado", "bola", "barra", "bio", "sem lactose", "cubos", "vegetal", "fiambre", "tosta", "sandes", "quartos"]
 unidade = "kg"
 
 [[produto]]

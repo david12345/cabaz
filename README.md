@@ -42,8 +42,9 @@ Depois de cada recolha, `cabaz/verificacao.py` confere a qualidade dos dados:
 
 | Situação | O que acontece |
 |---|---|
-| Faltam mais de 10% dos preços, ou uma loja não devolveu nenhum | ❌ O workflow fica vermelho (o GitHub envia email) e é aberta uma issue. Os preços recolhidos são gravados à mesma. |
-| Um preço por kg/L varia mais de 30% face à recolha anterior | ⚠️ É aberta uma issue `Alertas do cabaz: AAAA-MM-DD` (o GitHub envia email). |
+| Durante o dia faltam preços (ex.: uma loja bloqueou o servidor) | ℹ️ Só aviso no registo da execução: a execução seguinte tenta outra vez o que falta. |
+| Um dia **terminou** com mais de 10% dos preços em falta, ou com uma loja sem nenhum | ❌ Na primeira execução do dia seguinte, o workflow fica vermelho (o GitHub envia email) e é aberta uma issue. |
+| Um preço por kg/L varia mais de 30% face à recolha anterior | ⚠️ É aberta uma issue `Alertas do cabaz: AAAA-MM-DD` (só para os preços recolhidos nessa execução, para não repetir alertas). |
 | A loja passou a ter outro produto como o mais barato | 🔄 Listado na issue e no relatório, mas sozinho não abre issue. |
 
 Os alertas aparecem também no `RELATORIO.md` e na página. Os limites ajustam-se em
@@ -55,8 +56,16 @@ Para verificar à mão a última recolha: `python -m cabaz.verificacao`.
 ## Execução automática
 
 O workflow [`.github/workflows/cabaz-diario.yml`](.github/workflows/cabaz-diario.yml)
-corre todos os dias às 08:17 UTC, faz a recolha e grava o resultado no repositório.
-Pode também ser lançado à mão em *Actions → Cabaz diário → Run workflow*.
+está agendado **três vezes por dia** (08:17, 13:47 e 19:17 UTC; o GitHub costuma atrasar
+as execuções várias horas). A primeira execução do dia recolhe tudo; as seguintes só o que
+faltar — por exemplo, quando uma loja bloqueou o endereço IP do servidor anterior (cada
+execução corre noutro servidor). Se não faltar nada, terminam em segundos sem commit.
+
+Se uma loja recusar duas pesquisas seguidas (HTTP 403/429), o agente desiste dessa loja
+nessa execução, em vez de gastar minutos a insistir do mesmo IP.
+
+Pode também ser lançado à mão em *Actions → Cabaz diário → Run workflow*; por omissão
+recolhe só o que falta hoje, ou tudo outra vez se marcar *completa*.
 
 ## Uso local
 

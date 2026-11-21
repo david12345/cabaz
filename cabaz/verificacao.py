@@ -1,8 +1,10 @@
 """Verificações de qualidade da recolha do dia.
 
-Críticos (o workflow falha e o GitHub envia email):
+Críticos (o workflow falha):
   - cobertura abaixo do mínimo (por omissão 90% dos preços esperados);
   - uma loja sem nenhum preço no dia.
+  No workflow só se avaliam quando o dia termina (na primeira recolha do dia
+  seguinte): durante o dia há novas tentativas que podem completar a recolha.
 
 Suspeitos (abre-se uma issue no GitHub):
   - preço por kg/L que varia mais do que o limite (por omissão 30%) face à
@@ -11,8 +13,9 @@ Suspeitos (abre-se uma issue no GitHub):
 Informativo (listado na issue e no relatório, mas não abre issue sozinho):
   - troca do produto escolhido (outro código de produto) face à recolha anterior.
 
-Uso no workflow:
-    python -m cabaz.verificacao --saida verificacao   # escreve issue.md e define outputs
+Uso no workflow (várias execuções por dia, ver verificar_execucao):
+    python -m cabaz.agente --so-em-falta --registo registo.json
+    python -m cabaz.verificacao --registo registo.json --saida verificacao
 """
 from __future__ import annotations
 
@@ -96,7 +99,7 @@ def verificar(historico: list[dict], produtos: list[dict], lojas: list[str],
         a, b = float(velho["preco_unidade"]), float(novo["preco_unidade"])
         trocou = velho["pid"] != novo["pid"]
         info = {
-            "produto": prod, "loja": LOJAS_NOMES.get(loja, loja), "unidade": novo["unidade"],
+            "produto": prod, "loja": LOJAS_NOMES.get(loja, loja), "loja_id": loja, "unidade": novo["unidade"],
             "antes": a, "depois": b, "variacao": (b / a - 1) if a else None,
             "nome_antes": velho["nome_loja"], "nome_depois": novo["nome_loja"],
             "url": novo.get("url", ""), "trocou": trocou,
@@ -149,6 +152,31 @@ def markdown(r: Resultado, limites: dict | None = None) -> str:
     return "\n".join(L).rstrip() + "\n"
 
 
+def verificar_execucao(historico: list[dict], produtos: list[dict], lojas: list[str], registo: dict,
+                       limites: dict | None = None, parciais: frozenset | set = frozenset()) -> Resultado:
+    """Verificação de uma execução do workflow (podem ser várias por dia).
+
+    - Variações e trocas: só dos preços recolhidos nesta execução (`registo["novos"]`),
+      para não repetir alertas já dados numa execução anterior do mesmo dia.
+    - Cobertura do dia corrente: só aviso, porque a execução seguinte ainda pode completar.
+    - Crítico só quando um dia termina incompleto: na primeira recolha de um dia novo,
+      verifica-se o dia anterior (`registo["fechar"]`)."""
+    novos = {tuple(p) for p in registo.get("novos", [])}
+    r = verificar(historico, produtos, lojas, limites, registo["data"], parciais)
+    r.suspeitos = [x for x in r.suspeitos if (x["produto"], x["loja_id"]) in novos]
+    r.trocas = [x for x in r.trocas if (x["produto"], x["loja_id"]) in novos]
+    hoje_incompleto, r.criticos = r.criticos, []
+    if novos:
+        r.avisos += [f"Recolha de {r.data} ainda incompleta — {c} Nova tentativa na próxima execução."
+                     for c in hoje_incompleto]
+    else:
+        r.avisos = []
+    if fechar := registo.get("fechar"):
+        f = verificar(historico, produtos, lojas, limites, fechar, parciais)
+        r.criticos = [f"O dia {fechar} terminou incompleto: {c}" for c in f.criticos]
+    return r
+
+
 def main(argv: list[str] | None = None) -> int:
     from .agente import carregar_cabaz, ler_historico
     from .lojas import LOJAS, PARCIAIS
@@ -156,10 +184,18 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Verifica a qualidade da última recolha.")
     ap.add_argument("--saida", type=Path, help="pasta onde escrever issue.md e resultado.json")
     ap.add_argument("--data", help="data a verificar (por omissão a mais recente)")
+    ap.add_argument("--registo", type=Path,
+                    help="registo JSON da execução (python -m cabaz.agente --registo): verifica só "
+                         "o que esta execução recolheu e fecha o dia anterior")
     a = ap.parse_args(argv)
 
     limites = carregar_limites()
-    r = verificar(ler_historico(), carregar_cabaz(), list(LOJAS), limites, a.data, PARCIAIS)
+    historico, produtos = ler_historico(), carregar_cabaz()
+    if a.registo:
+        registo = json.loads(a.registo.read_text(encoding="utf-8"))
+        r = verificar_execucao(historico, produtos, list(LOJAS), registo, limites, PARCIAIS)
+    else:
+        r = verificar(historico, produtos, list(LOJAS), limites, a.data, PARCIAIS)
     texto = markdown(r, limites)
     print(texto)
 
@@ -172,7 +208,8 @@ def main(argv: list[str] | None = None) -> int:
         with open(gh, "a", encoding="utf-8") as f:
             f.write(f"data={r.data}\n")
             f.write(f"critico={'true' if r.criticos else 'false'}\n")
-            f.write(f"suspeito={'true' if (r.suspeitos or r.avisos) else 'false'}\n")
+            # avisos (dia ainda incompleto, Lidl sem preços) ficam no relatório e no log, sem issue
+            f.write(f"suspeito={'true' if r.suspeitos else 'false'}\n")
     return 0
 
 

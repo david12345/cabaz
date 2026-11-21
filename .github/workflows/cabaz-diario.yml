@@ -2,8 +2,19 @@ name: Cabaz diário
 
 on:
   schedule:
-    - cron: "17 8 * * *"   # todos os dias às 08:17 UTC (≈ 8h/9h em Lisboa)
-  workflow_dispatch: {}     # permite correr à mão no separador Actions
+    # Três execuções por dia (UTC; o GitHub costuma atrasá-las várias horas).
+    # A primeira do dia recolhe tudo; as seguintes só o que faltar (por exemplo,
+    # se uma loja bloqueou o IP do servidor anterior). Sem nada em falta,
+    # terminam em segundos e não fazem commit.
+    - cron: "17 8 * * *"
+    - cron: "47 13 * * *"
+    - cron: "17 19 * * *"
+  workflow_dispatch:        # permite correr à mão no separador Actions
+    inputs:
+      completa:
+        description: "Recolher tudo outra vez (em vez de só o que falta hoje)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write   # gravar os dados no repositório
@@ -31,7 +42,10 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Recolher preços e gerar relatório
-        run: python -m cabaz.agente
+        id: rec
+        env:
+          MODO: ${{ inputs.completa && ' ' || '--so-em-falta' }}
+        run: python -m cabaz.agente $MODO --registo "$RUNNER_TEMP/registo.json"
 
       - name: Gravar no repositório
         run: |
@@ -47,7 +61,8 @@ jobs:
 
       - name: Verificar qualidade da recolha
         id: verif
-        run: python -m cabaz.verificacao --saida "$RUNNER_TEMP/verificacao"
+        # só os preços novos desta execução; crítico só se o dia anterior terminou incompleto
+        run: python -m cabaz.verificacao --registo "$RUNNER_TEMP/registo.json" --saida "$RUNNER_TEMP/verificacao"
 
       - name: Abrir issue com alertas
         if: steps.verif.outputs.critico == 'true' || steps.verif.outputs.suspeito == 'true'
@@ -74,5 +89,5 @@ jobs:
       - name: Falhar se houver problemas críticos
         if: steps.verif.outputs.critico == 'true'
         run: |
-          echo "::error::Recolha incompleta — ver a issue 'Alertas do cabaz: ${{ steps.verif.outputs.data }}' e o RELATORIO.md"
+          echo "::error::Um dia terminou com a recolha incompleta — ver a issue 'Alertas do cabaz: ${{ steps.verif.outputs.data }}'"
           exit 1
