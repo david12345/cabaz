@@ -20,7 +20,7 @@ import tomllib
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from .lojas import LOJAS, PARCIAIS, Bloqueado, Oferta, normalizar
+from .lojas import LOJAS, Bloqueado, Oferta, normalizar
 from . import relatorio
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -145,18 +145,9 @@ def gravar_historico(novas: list[dict], caminho: Path = CSV) -> None:
         w.writerows(todas)
 
 
-def ja_recolhidos(historico: list[dict], produtos: list[dict], lojas: list[str], data: str) -> set[tuple[str, str]]:
-    """Pares (produto, loja) que não é preciso recolher outra vez em `data`.
-
-    Lojas completas: os pares que já têm preço nesse dia.
-    Lojas parciais (Lidl): se já há algum preço nesse dia, a loja respondeu e a falta
-    dos restantes é normal, por isso salta-se a loja toda."""
-    hoje = {(l["produto"], l["loja"]) for l in historico if l["data"] == data}
-    feito = set(hoje)
-    for loja in lojas:
-        if loja in PARCIAIS and any(lj == loja for _, lj in hoje):
-            feito |= {(p["nome"], loja) for p in produtos}
-    return feito
+def ja_recolhidos(historico: list[dict], data: str) -> set[tuple[str, str]]:
+    """Pares (produto, loja) que já têm preço em `data` e não é preciso recolher outra vez."""
+    return {(l["produto"], l["loja"]) for l in historico if l["data"] == data}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -182,7 +173,7 @@ def main(argv: list[str] | None = None) -> int:
             produtos = [p for p in produtos if any(f in normalizar(p["nome"]) for f in filtros)]
         historico = ler_historico()
         primeira = not any(l["data"] == data for l in historico)
-        ja_tem = ja_recolhidos(historico, produtos, a.lojas, data) if a.so_em_falta else set()
+        ja_tem = ja_recolhidos(historico, data) if a.so_em_falta else set()
         pedidos = [(p["nome"], l) for p in produtos for l in a.lojas if (p["nome"], l) not in ja_tem]
         if not pedidos:
             log.info("Recolha de %s já completa — nada a fazer.", data)

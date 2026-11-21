@@ -9,7 +9,7 @@
   color-scheme: light;
   --bg: #f6f5f2; --surface: #fcfcfb; --border: #e3e1dc; --grid: #ebe9e4;
   --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #7a7974;
-  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --best: #0b0b0b;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --best: #0b0b0b;
   --up: #c6382f; --down: #0f7a3a; --promo-bg: #fff1d6; --promo-ink: #7a4b00;
   --hl: #eef4fc;
 }
@@ -18,7 +18,7 @@
     color-scheme: dark;
     --bg: #121211; --surface: #1a1a19; --border: #2e2e2c; --grid: #262624;
     --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #8f8e86;
-    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --best: #f0efec;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --best: #f0efec;
     --up: #f0716a; --down: #3fbf6f; --promo-bg: #3a2c10; --promo-ink: #f3c46b;
     --hl: #1d2836;
   }
@@ -27,7 +27,7 @@
   color-scheme: dark;
   --bg: #121211; --surface: #1a1a19; --border: #2e2e2c; --grid: #262624;
   --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #8f8e86;
-  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --best: #f0efec;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --best: #f0efec;
   --up: #f0716a; --down: #3fbf6f; --promo-bg: #3a2c10; --promo-ink: #f3c46b;
   --hl: #1d2836;
 }
@@ -90,7 +90,7 @@ button.prod:hover { color: var(--s1); }
     <div class="legend" id="legend"></div>
     <div class="chart" id="chart"><div class="tip"></div></div>
     <div id="tabtot" hidden></div>
-    <p class="note">Soma do preço por kg/L de cada produto (ovos: dúzia). O total de uma loja só é mostrado nos dias em que tem todos os produtos. O Lidl fica de fora dos totais por só ter online os produtos em destaque.</p>
+    <p class="note">Soma do preço por kg/L de cada produto (ovos: dúzia). O total de uma loja só é mostrado nos dias em que tem todos os produtos.</p>
   </section>
 
   <section class="card">
@@ -104,7 +104,7 @@ button.prod:hover { color: var(--s1); }
     <div class="legend" id="legend2"></div>
     <div class="chart" id="chart2"><div class="tip"></div></div>
     <div class="tablewrap escolhas"><table id="esc"></table></div>
-    <p class="note">Preço por kg/L/dúzia da opção mais barata em cada loja, em cada dia. Linha tracejada = melhor preço entre Continente, Pingo Doce e Auchan. O Lidl só tem preço online nos dias em que o produto está em destaque. Passe o rato sobre o gráfico para ver o produto escolhido em cada loja.</p>
+    <p class="note">Preço por kg/L/dúzia da opção mais barata em cada loja, em cada dia. Linha tracejada = melhor preço entre as lojas. Passe o rato sobre o gráfico para ver o produto escolhido em cada loja.</p>
   </section>
 
   <section class="card warn" id="alertas" hidden><h2>⚠️ Alertas da verificação</h2><ul></ul>
@@ -114,7 +114,7 @@ button.prod:hover { color: var(--s1); }
 </main>
 <script>
 const D = /*__DADOS__*/null;
-const COR = { continente: "var(--s1)", pingodoce: "var(--s2)", auchan: "var(--s3)", lidl: "var(--s4)" };
+const COR = { continente: "var(--s1)", pingodoce: "var(--s2)", auchan: "var(--s3)" };
 const eur = v => v == null ? "—" : v.toLocaleString("pt-PT", { style: "currency", currency: "EUR" });
 const dataPT = s => new Date(s + "T12:00:00").toLocaleDateString("pt-PT", { day: "numeric", month: "short", year: "numeric" });
 const pct = p => {
@@ -124,7 +124,6 @@ const pct = p => {
   return `<span class="${c}">${s} ${(p > 0 ? "+" : "") + p.toFixed(1).replace(".", ",")}%</span>`;
 };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const completas = D.lojas.filter(l => !l.parcial);
 
 document.getElementById("sub").textContent =
   `${D.produtos.length} produtos essenciais em ${D.lojas.map(l => l.nome).join(", ")} · atualizado a ${dataPT(D.hoje)} · ${D.datas.length} dia(s) de histórico`;
@@ -163,7 +162,7 @@ function grafico(box, series, aria, unidade = "") {
     let path = "", on = false;
     s.vals.forEach((v, i) => { if (v == null) { on = false; return; } path += (on ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1); on = true; });
     svg += `<path d="${path}" fill="none" stroke="${s.cor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" ${s.dash ? 'stroke-dasharray="5 4"' : ""}/>`;
-    // pontos: em todas as datas se houver poucas ou falhas (séries esparsas como o Lidl); senão só o último
+    // pontos: em todas as datas se houver poucas ou falhas; senão só o último
     const esparsa = s.vals.some(v => v == null);
     const last = s.vals.findLastIndex(v => v != null);
     s.vals.forEach((v, i) => {
@@ -198,7 +197,7 @@ function grafico(box, series, aria, unidade = "") {
 
 // --- evolução do cabaz
 const seriesCabaz = [
-  ...completas.map(l => ({ nome: l.nome, cor: COR[l.id], vals: l.totais })),
+  ...D.lojas.map(l => ({ nome: l.nome, cor: COR[l.id], vals: l.totais })),
   { nome: "Melhor preço", cor: "var(--best)", vals: D.melhor, dash: true },
 ];
 legenda(document.getElementById("legend"), seriesCabaz);

@@ -43,14 +43,9 @@ class TestRecolher(unittest.TestCase):
 
 
 class TestJaRecolhidos(unittest.TestCase):
-    def test_loja_completa_e_parcial(self):
-        hist = [linha("2026-11-21", "P0", "continente"), linha("2026-11-21", "P1", "lidl"),
-                linha("2026-11-20", "P2", "continente")]
-        feito = ja_recolhidos(hist, PRODUTOS, ["continente", "lidl"], "2026-11-21")
-        self.assertIn(("P0", "continente"), feito)
-        self.assertNotIn(("P2", "continente"), feito)  # só conta o próprio dia
-        # o Lidl respondeu hoje: não se volta a pesquisar nenhum produto dele
-        self.assertTrue(all((p["nome"], "lidl") in feito for p in PRODUTOS))
+    def test_so_conta_o_proprio_dia(self):
+        hist = [linha("2026-11-21", "P0", "continente"), linha("2026-11-20", "P2", "continente")]
+        self.assertEqual(ja_recolhidos(hist, "2026-11-21"), {("P0", "continente")})
 
 
 class TestVerificarExecucao(unittest.TestCase):
