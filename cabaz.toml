@@ -256,6 +256,14 @@ unidade = "kg"
 
 [[produto]]
 cabaz = "extra"
+nome = "Iogurte grego natural Oikos (4×110 g)"   # não há Oikos natural de 200 g; é o formato pequeno à venda
+procura = "oikos natural"
+incluir = ["oikos", "natural"]
+excluir = ["acucar", "900", "0.9 kg", "0,9 kg", "pro", "proteina"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
 nome = "Salmão fumado"
 procura = "salmao fumado"
 incluir = ["salmao", "fumado"]
