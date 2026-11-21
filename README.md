@@ -18,7 +18,7 @@ São analisados em separado, cada um com totais, página e relatório próprios:
 | Cabaz | Produtos | Página | Relatório |
 |---|---|---|---|
 | **Cabaz de alimentos base** | 27 alimentos essenciais | [`docs/index.html`](docs/index.html) | [`RELATORIO.md`](RELATORIO.md) |
-| **Cabaz extra** | 17 produtos: álcool etílico 96%, gin Gordon's, sabonete Feno, iogurte grego natural, salmão fumado, Becel sabor a manteiga, courgete, abóbora, alho francês, brócolos, couve-flor, nabos, salsa, coentros, framboesas, ervilhas congeladas, nozes | [`docs/extra.html`](docs/extra.html) | [`RELATORIO-extra.md`](RELATORIO-extra.md) |
+| **Cabaz extra** | 18 produtos: álcool etílico 96%, gin Gordon's, sabonete Feno, iogurte grego natural, iogurte grego natural Oikos (4×110 g), salmão fumado, Becel sabor a manteiga, courgete, abóbora, alho francês, brócolos, couve-flor, nabos, salsa, coentros, framboesas, ervilhas congeladas, nozes | [`docs/extra.html`](docs/extra.html) | [`RELATORIO-extra.md`](RELATORIO-extra.md) |
 
 Para criar outro cabaz: acrescente-o em `[cabazes]` no `cabaz.toml` (ex.: `limpeza = "Cabaz de limpeza"`)
 e indique `cabaz = "limpeza"` nos respetivos `[[produto]]`. A página fica em `docs/limpeza.html`.
@@ -26,6 +26,7 @@ e indique `cabaz = "limpeza"` nos respetivos `[[produto]]`. A página fica em `d
 Notas sobre o cabaz extra:
 - **Álcool etílico:** nenhuma loja vende a 98%; segue-se o de 96%.
 - **Becel:** é um creme vegetal para barrar; segue-se a versão "sabor a manteiga".
+- **Oikos natural:** nenhuma loja vende o de 200 g; segue-se o pack 4×110 g (440 g), à venda nas três.
 - **Nozes:** as lojas não indicam a origem online, por isso não é possível garantir "nacionais"
   (exclui-se o miolo do Chile). No Pingo Doce só há miolo de marca premium.
 - **Brócolos e couve-flor no Continente:** fixados os frescos (`fixo`), porque as embalagens
