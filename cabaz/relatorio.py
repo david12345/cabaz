@@ -92,10 +92,37 @@ def _valor_em(datas, valores, alvo: str):
     return res
 
 
-def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None = None) -> None:
+def destinos(cabazes: dict[str, str]) -> dict[str, tuple[str, str]]:
+    """id do cabaz -> (relatório .md, página em docs/). O primeiro é o principal."""
+    res = {}
+    for i, cid in enumerate(cabazes):
+        res[cid] = ("RELATORIO.md", "index.html") if i == 0 else (f"RELATORIO-{cid}.md", f"{cid}.html")
+    return res
+
+
+def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None = None,
+          cabazes: dict[str, str] | None = None) -> None:
+    """Gera um relatório e uma página por cabaz, cada um só com os seus produtos."""
+    cabazes = cabazes or {"base": "Cabaz de alimentos base"}
+    falhas = falhas or []
+    dest = destinos(cabazes)
+    for cid, titulo in cabazes.items():
+        prods = [p for p in produtos if p.get("cabaz", "base") == cid]
+        if not prods:
+            continue
+        nomes = {p["nome"] for p in prods}
+        hist = [l for l in historico if l["produto"] in nomes]
+        # avisos do próprio cabaz ("Produto @ loja: ...") e os gerais da loja ("loja: bloqueou ...")
+        av = [f for f in falhas if f.split(" @ ")[0] in nomes or " @ " not in f]
+        nav = [{"nome": t, "url": dest[c][1], "atual": c == cid} for c, t in cabazes.items()
+               if any(p.get("cabaz", "base") == c for p in produtos)]
+        _gerar_cabaz(hist, prods, av, titulo, *dest[cid], nav)
+
+
+def _gerar_cabaz(historico: list[dict], produtos: list[dict], falhas: list[str],
+                 titulo: str, md: str, html_nome: str, nav: list[dict]) -> None:
     from . import verificacao
 
-    falhas = falhas or []
     if not historico:
         return
     ordem, datas, lojas, custo, real = series(historico, produtos)
@@ -131,9 +158,15 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
     movimentos.sort(key=lambda m: -abs(m[0]))
 
     # ---------- Markdown ----------
-    L = [f"# Cabaz de alimentos base — {hoje}", ""]
+    L = [f"# {titulo} — {hoje}", ""]
+    if len(nav) > 1:
+        outros = [n for n in nav if not n["atual"]]
+        L += ["Outros cabazes: " + " · ".join(
+            f"[{n['nome']}]({'RELATORIO.md' if n['url'] == 'index.html' else 'RELATORIO-' + n['url'][:-5] + '.md'})"
+            for n in outros), ""]
     L.append(f"Preços recolhidos diariamente em {', '.join(LOJAS_NOMES[l] for l in lojas)}. "
-             f"{len(ordem)} produtos; custo de referência = preço por kg/L (ovos: dúzia). "
+             f"{len(ordem)} produtos; custo de referência = preço por kg/L"
+             f"{' (à unidade: dúzia)' if any(u == 'un' for u in unid.values()) else ''}. "
              "Em cada loja escolhe-se a opção mais barata que cumpre os critérios de `cabaz.toml`.")
     L += ["", "## Custo do cabaz", "", "| | Hoje | vs ontem | vs 7 dias | vs 30 dias | vs início |", "|---|---:|---:|---:|---:|---:|"]
     linhas_tot = [("**Melhor preço** (loja mais barata em cada produto)", melhor)] + \
@@ -182,11 +215,13 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
     if falhas:
         L += ["## Avisos da recolha", ""] + [f"- {f}" for f in falhas] + [""]
     L += ["---", f"Histórico completo: [`data/precos.csv`](data/precos.csv) · "
-          f"Gráfico interativo: [`docs/index.html`](docs/index.html) · {len(datas)} dia(s) registado(s)."]
-    (RAIZ / "RELATORIO.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+          f"Gráfico interativo: [`docs/{html_nome}`](docs/{html_nome}) · {len(datas)} dia(s) registado(s)."]
+    (RAIZ / md).write_text("\n".join(L) + "\n", encoding="utf-8")
 
     # ---------- HTML ----------
     dados = {
+        "titulo": titulo,
+        "nav": nav,
         "hoje": hoje,
         "datas": datas,
         "lojas": [{"id": l, "nome": LOJAS_NOMES[l], "totais": por_loja[l]} for l in lojas],
@@ -221,4 +256,4 @@ def gerar(historico: list[dict], produtos: list[dict], falhas: list[str] | None 
     modelo = (Path(__file__).parent / "modelo.html").read_text(encoding="utf-8")
     html = modelo.replace("/*__DADOS__*/null", json.dumps(dados, ensure_ascii=False).replace("</", "<\\/"))
     (RAIZ / "docs").mkdir(exist_ok=True)
-    (RAIZ / "docs" / "index.html").write_text(html, encoding="utf-8")
+    (RAIZ / "docs" / html_nome).write_text(html, encoding="utf-8")

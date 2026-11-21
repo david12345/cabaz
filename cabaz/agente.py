@@ -39,8 +39,15 @@ def carregar_cabaz(caminho: Path = CONFIG) -> list[dict]:
         p.setdefault("incluir", [])
         p.setdefault("excluir", [])
         p.setdefault("fixo", {})
+        p.setdefault("cabaz", "base")
         p.setdefault("quantidade", 12 if p["unidade"] == "un" else 1)
     return produtos
+
+
+def carregar_cabazes(caminho: Path = CONFIG) -> dict[str, str]:
+    """id -> título dos cabazes, pela ordem do ficheiro (o primeiro é o principal)."""
+    with open(caminho, "rb") as f:
+        return tomllib.load(f).get("cabazes") or {"base": "Cabaz de alimentos base"}
 
 
 def _contem(nome: str, termo: str) -> bool:
@@ -52,6 +59,7 @@ def corresponde(oferta: Oferta, produto: dict) -> bool:
     nome = normalizar(oferta.nome)
     return (
         all(_contem(nome, t) for t in produto["incluir"])
+        and (not produto.get("comeca") or nome.startswith(normalizar(produto["comeca"])))
         and not any(_contem(nome, t) for t in produto["excluir"])
         and oferta.unidade == produto["unidade"]
         and oferta.preco_unidade
@@ -194,8 +202,8 @@ def main(argv: list[str] | None = None) -> int:
         fechar = anteriores[-1] if primeira and anteriores else None
         _registar(a.registo, data, [(l["produto"], l["loja"]) for l in linhas], fechar)
 
-    relatorio.gerar(ler_historico(), carregar_cabaz(), falhas)
-    log.info("Relatório atualizado: RELATORIO.md, docs/index.html")
+    relatorio.gerar(ler_historico(), carregar_cabaz(), falhas, carregar_cabazes())
+    log.info("Relatórios atualizados: RELATORIO*.md, docs/*.html")
     return 0
 
 

@@ -5,6 +5,9 @@
 # `excluir` (sem distinguir maiúsculas/acentos) e cujo preço unitário está
 # na `unidade` indicada (kg, L, un). Escolhe-se o mais barato por unidade.
 #
+# `comeca` (opcional): o nome do produto tem de começar por este texto — útil
+# quando a palavra aparece em muitos outros produtos (ex.: "salsa", "framboesa").
+#
 # Para seguir sempre o mesmo produto numa loja, fixe o seu código:
 #   fixo = { continente = "4421406", auchan = "3010402", pingodoce = "48150" }
 
@@ -16,6 +19,14 @@
 [verificacao]
 cobertura_minima = 0.90
 variacao_suspeita = 0.30
+
+# Cabazes analisados em separado (totais, página e relatório próprios).
+# Cada [[produto]] pertence ao cabaz indicado em `cabaz` (por omissão "base").
+# O primeiro é a página principal (docs/index.html, RELATORIO.md); os outros
+# ficam em docs/<id>.html e RELATORIO-<id>.md.
+[cabazes]
+base = "Cabaz de alimentos base"
+extra = "Cabaz extra"
 
 [[produto]]
 nome = "Leite UHT meio-gordo"
@@ -205,3 +216,151 @@ procura = "pao de forma"
 incluir = ["pao", "forma"]
 excluir = ["integral", "sem gluten", "sem codea", "brioche", "bio", "cereais", "centeio", "sementes", "milho", "proteina", "aveia", "torrado", "tostas", "hamburguer", "cachorro", "leite"]
 unidade = "kg"
+
+
+# ---------------------------------------------------------------------------
+# Cabaz extra
+# ---------------------------------------------------------------------------
+
+[[produto]]
+cabaz = "extra"
+nome = "Álcool etílico 96%"   # nenhuma loja vende a 98%
+procura = "alcool etilico"
+incluir = ["alcool", "etilico", "96"]
+excluir = ["gel", "toalhet", "spray"]
+unidade = "L"
+
+[[produto]]
+cabaz = "extra"
+nome = "Gin Gordon's"
+procura = "gin gordons"
+incluir = ["gin", "gordon"]
+excluir = ["pink", "lemon", "sicilian", "premium", "laranja", "tonic", "lata", "copo", "0,0", "0.0", "sem alcool"]
+unidade = "L"
+
+[[produto]]
+cabaz = "extra"
+nome = "Sabonete Feno (sólido)"
+procura = "sabonete feno"
+incluir = ["sabonete", "feno", "solido"]
+excluir = ["oliva", "mel", "nutricuida", "liquido", "lavanda", "amendoa"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Iogurte grego natural"
+procura = "iogurte grego natural"
+incluir = ["iogurte", "grego", "natural"]
+excluir = ["acucar", "ligeiro", "light", "equilibrio", "magro", "morango", "frutos", "mel", "coco", "bio", "proteina", "liquido"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Salmão fumado"
+procura = "salmao fumado"
+incluir = ["salmao", "fumado"]
+excluir = ["cubos", "tartaro", "lombinhos", "marinado", "selvagem", "alta temperatura", "creme", "pate", "mousse", "salada", "sandes", "wrap", "bagel", "queijo", "massa", "pizza"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Becel sabor a manteiga"   # creme vegetal para barrar
+procura = "becel"
+incluir = ["becel", "manteiga"]
+excluir = ["pro activ", "proactiv", "magro", "culinar", "liquid"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Courgete"
+procura = "courgette"
+incluir = ["curgete"]
+excluir = ["rodelas", "espirais", "cubos", "bio", "ratatouille", "caril", "semente", "ravioli", "gato", "congelad", "sopa", "creme"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Abóbora"
+procura = "abobora"
+incluir = ["abobora"]
+excluir = ["doce", "pao", "semente", "snack", "cubos", "pedac", "cortad", "sopa", "creme", "bio", "congelad", "pure", "bolo", "compota"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Alho francês"
+procura = "alho frances"
+incluir = ["alho frances"]
+excluir = ["cortad", "rodelas", "pedac", "congelad", "bio", "sopa", "creme", "tarte", "roti", "quiche"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Brócolos"
+procura = "brocolos"
+incluir = ["brocol"]
+excluir = ["florete", "congelad", "iglo", "bonduelle", "campotec", "sopa", "creme", "bio", "cozid", "mistura", "gratinado", "veggie", "arroz"]
+unidade = "kg"
+fixo = { continente = "2076764" }   # Couve Brócolo fresca (o "Brócolos 1 kg" é congelado)
+
+[[produto]]
+cabaz = "extra"
+nome = "Couve-flor"
+procura = "couve flor"
+incluir = ["couve", "flor"]
+excluir = ["congelad", "florete", "bio", "creme", "gratinado", "mistura", "veggie", "preparado", "vinagre", "brocol", "cenoura"]
+unidade = "kg"
+fixo = { continente = "2076768" }   # Couve Flor fresca (a de 750 g é congelada)
+
+[[produto]]
+cabaz = "extra"
+nome = "Nabos"
+procura = "nabo"
+incluir = ["nabo"]
+excluir = ["grelo", "semente", "taca", "livro", "principe", "gigante"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Salsa fresca"
+procura = "salsa"
+comeca = "salsa"
+incluir = ["salsa"]
+excluir = ["folha", "frasco", "saqueta", "desidrat", "picad", "semente", "manteiga", "pao", "caldo", "molho", "alho", "bio"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Coentros frescos"
+procura = "coentros"
+comeca = "coentro"
+incluir = ["coentro"]
+excluir = ["folha", "frasco", "grao", "picad", "semente", "salada", "maionese", "lombinho", "molho", "bio"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Framboesas"
+procura = "framboesas"
+comeca = "framboesa"
+incluir = ["framboesa"]
+excluir = ["mix", "mirtilo", "sumo", "proteina", "iogurte", "bolach", "snack", "bombons", "cobertas", "bio", "petit", "quark", "compota", "doce", "congelad", "gelado", "cereais"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Ervilhas congeladas"
+procura = "ervilha"
+incluir = ["ervilha"]
+excluir = ["lata", "cozid", "natural", "compal", "cenoura", "bio", "seca", "petit pois", "primavera"]
+unidade = "kg"
+
+[[produto]]
+cabaz = "extra"
+nome = "Nozes (miolo)"   # nenhuma loja indica a origem online; "Chile" excluído
+procura = "miolo de noz"
+comeca = "miolo de noz"
+incluir = ["noz"]
+excluir = ["pecan", "chile", "moscada", "iogurte", "doce", "pure", "pao", "bolo", "bio", "mistura", "caju", "amendoa", "avela"]
+unidade = "kg"
+

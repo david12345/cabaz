@@ -2,7 +2,7 @@
 
 Agente que, todos os dias, **pesquisa** os supermercados online portugueses
 (Continente, Pingo Doce e Auchan), escolhe em cada um a opção mais barata de
-27 alimentos essenciais e **monitoriza** a evolução do custo do cabaz e de cada produto.
+cada produto dos cabazes e **monitoriza** a evolução do custo dos cabazes e de cada produto.
 
 - 📊 **Relatório do dia:** [`RELATORIO.md`](RELATORIO.md)
 - 📈 **Página interativa:** [`docs/index.html`](docs/index.html) — evolução do cabaz e
@@ -10,6 +10,27 @@ Agente que, todos os dias, **pesquisa** os supermercados online portugueses
   o endereço `…/#Bacalhau` abre diretamente esse produto) (ative o GitHub Pages em
   *Settings → Pages → Branch: main, pasta `/docs`* para o ver online)
 - 🗃️ **Histórico completo:** [`data/precos.csv`](data/precos.csv)
+
+## Cabazes
+
+São analisados em separado, cada um com totais, página e relatório próprios:
+
+| Cabaz | Produtos | Página | Relatório |
+|---|---|---|---|
+| **Cabaz de alimentos base** | 27 alimentos essenciais | [`docs/index.html`](docs/index.html) | [`RELATORIO.md`](RELATORIO.md) |
+| **Cabaz extra** | 17 produtos: álcool etílico 96%, gin Gordon's, sabonete Feno, iogurte grego natural, salmão fumado, Becel sabor a manteiga, courgete, abóbora, alho francês, brócolos, couve-flor, nabos, salsa, coentros, framboesas, ervilhas congeladas, nozes | [`docs/extra.html`](docs/extra.html) | [`RELATORIO-extra.md`](RELATORIO-extra.md) |
+
+Para criar outro cabaz: acrescente-o em `[cabazes]` no `cabaz.toml` (ex.: `limpeza = "Cabaz de limpeza"`)
+e indique `cabaz = "limpeza"` nos respetivos `[[produto]]`. A página fica em `docs/limpeza.html`.
+
+Notas sobre o cabaz extra:
+- **Álcool etílico:** nenhuma loja vende a 98%; segue-se o de 96%.
+- **Becel:** é um creme vegetal para barrar; segue-se a versão "sabor a manteiga".
+- **Nozes:** as lojas não indicam a origem online, por isso não é possível garantir "nacionais"
+  (exclui-se o miolo do Chile). No Pingo Doce só há miolo de marca premium.
+- **Brócolos e couve-flor no Continente:** fixados os frescos (`fixo`), porque as embalagens
+  de 1 kg / 750 g são congeladas.
+- **Abóbora:** a variedade mais barata varia de loja para loja (inteira, manteiga, butternut).
 
 ## Lojas
 
