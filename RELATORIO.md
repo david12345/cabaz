@@ -1,4 +1,4 @@
-# Cabaz de alimentos base — 2026-11-21
+# Cabaz de alimentos base — 2026-11-22
 
 Outros cabazes: [Cabaz extra](RELATORIO-extra.md)
 
@@ -9,7 +9,7 @@ Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; c
 | | Hoje | vs ontem | vs 7 dias | vs 30 dias | vs início |
 |---|---:|---:|---:|---:|---:|
 | **Melhor preço** (loja mais barata em cada produto) | 115,35 € | = 0,0% | — | — | ▲ +0,8% |
-| Continente | 120,80 € | ▼ -0,7% | — | — | ▲ +0,2% |
+| Continente | 120,80 € | = 0,0% | — | — | ▲ +0,2% |
 | Pingo Doce | 138,82 € | = 0,0% | — | — | ▼ -0,6% |
 | Auchan | 121,67 € | = 0,0% | — | — | ▲ +0,5% |
 
@@ -41,7 +41,7 @@ Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; c
 | Banana (/kg) | [**1,19 €**](https://www.continente.pt/produto/banana-continente-2597619.html) | [**1,19 €**](https://www.pingodoce.pt/home/produtos/frutas-e-vegetais/frutas/fruta-da-epoca/banana-importada-nossa-fruta-e-legumes-43218.html) | [**1,19 €**](https://www.auchan.pt/pt/produtos-frescos/fruta/banana-e-frutos-tropicais/banana-del-monte-kg/234229.html) | = 0,0% |
 | Maçã (/kg) | [1,89 €](https://www.continente.pt/produto/maca-gala-sem-residuos-de-pesticidas-continente-7683300.html) | [**1,26 €** 🏷](https://www.pingodoce.pt/home/produtos/frutas-e-vegetais/frutas/fruta-da-epoca/maca-gala-embalada-nossa-fruta-e-legumes-952933.html) | [1,69 €](https://www.auchan.pt/pt/produtos-frescos/fruta/macas-peras-e-uvas/maca-gala-alcobaca-igp-auchan-1-kg/3355854.html) | = 0,0% |
 | Iogurte natural (/kg) | [1,49 €](https://www.continente.pt/produto/iogurte-natural-continente-6804954.html) | [**1,39 €**](https://www.pingodoce.pt/home/produtos/iogurtes-e-sobremesas/iogurtes/iogurtes-naturais%E2%80%8B/iogurte-natural-pack-8-pingo-doce-969872.html) | [**1,39 €**](https://www.auchan.pt/pt/alimentacao/produtos-lacteos/iogurtes/magros-e-naturais/iogurte-auchan-natural-8x125g/1042304.html) | = 0,0% |
-| Queijo flamengo fatiado (/kg) | [7,18 € 🏷](https://www.continente.pt/produto/queijo-flamengo-fatiado-continente-2888438.html) | [7,79 €](https://www.pingodoce.pt/home/produtos/charcutaria-e-queijos/queijos/queijo-fatiado-e-bola%E2%80%8B/queijo-flamengo-quartos-pingo-doce-358372.html) | [**7,11 €**](https://www.auchan.pt/pt/produtos-frescos/queijaria/queijo-fatiado-e-barra/queijo-campainha-flamengo-fatiado-800g/1127256.html) | = 0,0% |
+| Queijo flamengo fatiado (/kg) | [7,18 € 🏷](https://www.continente.pt/produto/queijo-flamengo-fatiado-continente-2888438.html) | [7,79 €](https://www.pingodoce.pt/home/produtos/charcutaria-e-queijos/queijos/queijo-fatiado-e-bola%E2%80%8B/queijo-flamengo-%28pedido-ao-balcao%29-pingo-doce-353195.html) | [**7,11 €**](https://www.auchan.pt/pt/produtos-frescos/queijaria/queijo-fatiado-e-barra/queijo-campainha-flamengo-fatiado-800g/1127256.html) | = 0,0% |
 | Fiambre (/kg) | [7,48 €](https://www.continente.pt/produto/fiambre-da-pa-fatiado-pack-familiar-continente-7458345.html) | [**5,95 €** 🏷](https://www.pingodoce.pt/home/produtos/charcutaria-e-queijos/charcutaria/fiambre-mortadela-e-chouricao%E2%80%8B/fiambre-corrente-fatiado-porminho-725396.html) | [6,75 €](https://www.auchan.pt/pt/produtos-frescos/charcutaria/fiambre-de-porco/fiambre-corrente-polegar-fatias-200g/3679704.html) | = 0,0% |
 | Feijão (lata/frasco) (/kg) | [2,23 €](https://www.continente.pt/produto/feijao-encarnado-cozido-continente-6592523.html) | [**2,13 €**](https://www.pingodoce.pt/home/produtos/mercearia/conservas/feijao-grao-e-outros/feijao-manteiga-cozido-em-frasco-pingo-doce-353390.html) | [2,21 €](https://www.auchan.pt/pt/alimentacao/mercearia/conservas/cogumelo-milho-ervilha-feijao-e-outros/feijao-preto-auchan-cozido-820%28520%29g/640417.html) | = 0,0% |
 | Café moído (/kg) | [11,80 €](https://www.continente.pt/produto/cafe-moido-moagem-universal-intenso-int-10-continente-8773239.html) | [11,80 €](https://www.pingodoce.pt/home/produtos/cafe-cha-e-achocolatados/cafe-moido-e-grao/cafe-moido-moagem-universal-envolvente-pingo-doce-961052.html) | [**11,77 €**](https://www.auchan.pt/pt/alimentacao/mercearia/cafe-cha-e-infusao/cafe-de-maquina-grao-e-pastilhas/cafe-moido-delta-mistura-peninsular-220-g/3633072.html) | = 0,0% |
@@ -51,17 +51,15 @@ Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; c
 
 ## Maiores variações desde ontem
 
-| Produto | Loja | Ontem | Hoje | Var. |
-|---|---|---:|---:|---:|
-| Queijo flamengo fatiado — _Queijo Flamengo Fatiado Continente (emb. 500 g)_ | Continente | 7,98 € | 7,18 € | ▼ -10,0% |
+Sem variações (ou ainda só há um dia de histórico).
 
 ## Verificação automática
 
-Verificação da recolha de **2026-11-21** (cobertura 81/81 = 100%), comparada com **2026-11-20**.
+Verificação da recolha de **2026-11-22** (cobertura 81/81 = 100%), comparada com **2026-11-21**.
 
 ### 🔄 Trocas de produto (sem variação suspeita)
 
-- **Pescada congelada** @ Continente: Pescada Média do Cabo MSC Congelada (Quant. Mínima = 980 gr) → Pescada Média da Argentina Congelada (Quant. Mínima = 530 gr (1 un)) (5,99 € → 5,99 €/kg, +0%)
+- **Queijo flamengo fatiado** @ Pingo Doce: Queijo Flamengo Quartos Pingo Doce (0.35 Kg) → Queijo Flamengo (pedido ao Balcão) Pingo Doce (0.3 Kg) (7,79 € → 7,79 €/kg, +0%)
 
 ---
-Histórico completo: [`data/precos.csv`](data/precos.csv) · Gráfico interativo: [`docs/index.html`](docs/index.html) · 6 dia(s) registado(s).
+Histórico completo: [`data/precos.csv`](data/precos.csv) · Gráfico interativo: [`docs/index.html`](docs/index.html) · 7 dia(s) registado(s).
