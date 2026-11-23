@@ -1,4 +1,4 @@
-# Cabaz extra — 2026-11-22
+# Cabaz extra — 2026-11-23
 
 Outros cabazes: [Cabaz de alimentos base](RELATORIO.md)
 
@@ -46,9 +46,9 @@ Sem variações (ou ainda só há um dia de histórico).
 
 ## Verificação automática
 
-Verificação da recolha de **2026-11-22** (cobertura 54/54 = 100%), comparada com **2026-11-21**.
+Verificação da recolha de **2026-11-23** (cobertura 54/54 = 100%), comparada com **2026-11-22**.
 
 ✅ Sem problemas.
 
 ---
-Histórico completo: [`data/precos.csv`](data/precos.csv) · Gráfico interativo: [`docs/extra.html`](docs/extra.html) · 2 dia(s) registado(s).
+Histórico completo: [`data/precos.csv`](data/precos.csv) · Gráfico interativo: [`docs/extra.html`](docs/extra.html) · 3 dia(s) registado(s).

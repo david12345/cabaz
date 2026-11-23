@@ -1,4 +1,4 @@
-# Cabaz de alimentos base — 2026-11-22
+# Cabaz de alimentos base — 2026-11-23
 
 Outros cabazes: [Cabaz extra](RELATORIO-extra.md)
 
@@ -8,10 +8,10 @@ Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; c
 
 | | Hoje | vs ontem | vs 7 dias | vs 30 dias | vs início |
 |---|---:|---:|---:|---:|---:|
-| **Melhor preço** (loja mais barata em cada produto) | 115,35 € | = 0,0% | — | — | ▲ +0,8% |
-| Continente | 120,80 € | = 0,0% | — | — | ▲ +0,2% |
-| Pingo Doce | 138,82 € | = 0,0% | — | — | ▼ -0,6% |
-| Auchan | 121,67 € | = 0,0% | — | — | ▲ +0,5% |
+| **Melhor preço** (loja mais barata em cada produto) | 115,38 € | = 0,0% | ▲ +0,9% | — | ▲ +0,9% |
+| Continente | 120,94 € | ▲ +0,1% | ▲ +0,3% | — | ▲ +0,3% |
+| Pingo Doce | 138,82 € | = 0,0% | ▼ -0,6% | — | ▼ -0,6% |
+| Auchan | 121,67 € | = 0,0% | ▲ +0,5% | — | ▲ +0,5% |
 
 > Total de loja só aparece quando a loja tem preço para todos os produtos nesse dia (falhas pontuais usam o último preço conhecido).
 
@@ -20,7 +20,7 @@ Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; c
 | Produto | Continente | Pingo Doce | Auchan | Var. dia (melhor) |
 |---|---:|---:|---:|---:|
 | Leite UHT meio-gordo (/L) | [0,83 €](https://www.continente.pt/produto/leite-uht-meio-gordo-gresso-7599915.html) | [**0,79 €** 🏷](https://www.pingodoce.pt/home/produtos/leite-e-bebidas-vegetais/leite/leite-meio-gordo-e-gordo%E2%80%8B/leite-uht-meio-gordo-terra-alegre-989755.html) | [0,85 €](https://www.auchan.pt/pt/alimentacao/produtos-lacteos/leites/leite-uht/leite-uht-auchan-meio-gordo-1l/3010403.html) | = 0,0% |
-| Ovos (classe M/L) (/dúzia) | [**2,85 €** 🏷](https://www.continente.pt/produto/ovos-de-solo-classe-m-l-superovo-7109807.html) | [2,88 € 🏷](https://www.pingodoce.pt/home/produtos/promocoes/poupe-esta-semana/ovos-m-campovo-18-unid-campovo-971391.html) | [2,88 €](https://www.auchan.pt/pt/alimentacao/produtos-lacteos/ovos/ovos-galinhas-criadas-no-solo/ovos-galinhas-solo-auchan-classe-m-24un/446856.html) | = 0,0% |
+| Ovos (classe M/L) (/dúzia) | [2,99 €](https://www.continente.pt/produto/ovos-de-solo-classe-m-continente-7284496.html) | [**2,88 €** 🏷](https://www.pingodoce.pt/home/produtos/promocoes/poupe-esta-semana/ovos-m-campovo-18-unid-campovo-971391.html) | [**2,88 €**](https://www.auchan.pt/pt/alimentacao/produtos-lacteos/ovos/ovos-galinhas-criadas-no-solo/ovos-galinhas-solo-auchan-classe-m-24un/446856.html) | ▲ +1,1% |
 | Arroz carolino (/kg) | [**0,99 €**](https://www.continente.pt/produto/arroz-carolino-pack-poupanca-continente-8966612.html) | [1,11 € 🏷](https://www.pingodoce.pt/home/produtos/mercearia/arroz-massa-e-leguminosas/arroz/arroz-carolino-louro-961619.html) | [1,05 €](https://www.auchan.pt/pt/alimentacao/mercearia/arroz-e-massa/arroz/arroz-carolino-auchan-extra-longo-1kg/56832.html) | = 0,0% |
 | Esparguete (/kg) | [**0,99 €**](https://www.continente.pt/produto/massa-esparguete-pack-poupanca-continente-5253941.html) | [**0,99 €**](https://www.pingodoce.pt/home/produtos/as-nossas-marcas/pingo-doce/massa-esparguete-pack-poupanca-pingo-doce-895467.html) | [**0,99 €**](https://www.auchan.pt/pt/alimentacao/mercearia/arroz-e-massa/esparguete-aletria-e-meadas/esparguete-auchan-1kg/3771753.html) | = 0,0% |
 | Açúcar branco (/kg) | [**0,85 €**](https://www.continente.pt/produto/acucar-branco-pack-poupanca-continente-8037045.html) | [0,89 €](https://www.pingodoce.pt/home/produtos/mercearia/farinha-fermento-e-acucar/acucar-e-adocante/acucar-branco-granulado-pingo-doce-643460.html) | [0,89 €](https://www.auchan.pt/pt/alimentacao/mercearia/acucar-e-adocante/acucar/acucar-auchan-branco-granulado-1kg/4002491.html) | = 0,0% |
@@ -51,15 +51,17 @@ Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; c
 
 ## Maiores variações desde ontem
 
-Sem variações (ou ainda só há um dia de histórico).
+| Produto | Loja | Ontem | Hoje | Var. |
+|---|---|---:|---:|---:|
+| Ovos (classe M/L) — _Ovos de Solo Classe M Continente (emb. 12 un)_ | Continente | 2,85 € | 2,99 € | ▲ +4,9% |
 
 ## Verificação automática
 
-Verificação da recolha de **2026-11-22** (cobertura 81/81 = 100%), comparada com **2026-11-21**.
+Verificação da recolha de **2026-11-23** (cobertura 81/81 = 100%), comparada com **2026-11-22**.
 
 ### 🔄 Trocas de produto (sem variação suspeita)
 
-- **Queijo flamengo fatiado** @ Pingo Doce: Queijo Flamengo Quartos Pingo Doce (0.35 Kg) → Queijo Flamengo (pedido ao Balcão) Pingo Doce (0.3 Kg) (7,79 € → 7,79 €/kg, +0%)
+- **Ovos (classe M/L)** @ Continente: Ovos de Solo Classe M/L Superovo (emb. 12 un) → Ovos de Solo Classe M Continente (emb. 12 un) (0,24 € → 0,25 €/un, +5%)
 
 ---
-Histórico completo: [`data/precos.csv`](data/precos.csv) · Gráfico interativo: [`docs/index.html`](docs/index.html) · 7 dia(s) registado(s).
+Histórico completo: [`data/precos.csv`](data/precos.csv) · Gráfico interativo: [`docs/index.html`](docs/index.html) · 8 dia(s) registado(s).
