@@ -1,4 +1,4 @@
-# Cabaz de alimentos base — 2026-11-27
+# Cabaz de alimentos base — 2026-11-28
 
 Outros cabazes: [Cabaz extra](RELATORIO-extra.md)
 
@@ -8,9 +8,9 @@ Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; c
 
 | | Hoje | vs ontem | vs 7 dias | vs 30 dias | vs início |
 |---|---:|---:|---:|---:|---:|
-| **Melhor preço** (loja mais barata em cada produto) | 115,18 € | ▼ -0,4% | ▼ -0,1% | — | ▲ +0,7% |
-| Continente | 119,69 € | ▼ -0,4% | ▼ -1,6% | — | ▼ -0,7% |
-| Pingo Doce | 128,87 € | = 0,0% | ▼ -7,2% | — | ▼ -7,7% |
+| **Melhor preço** (loja mais barata em cada produto) | 114,18 € | ▼ -0,9% | ▼ -1,0% | — | ▼ -0,2% |
+| Continente | 119,69 € | = 0,0% | ▼ -0,9% | — | ▼ -0,7% |
+| Pingo Doce | 126,70 € | ▼ -1,7% | ▼ -8,7% | — | ▼ -9,3% |
 | Auchan | 122,77 € | = 0,0% | ▲ +0,9% | — | ▲ +1,4% |
 
 > Total de loja só aparece quando a loja tem preço para todos os produtos nesse dia (falhas pontuais usam o último preço conhecido).
@@ -25,14 +25,14 @@ Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; c
 | Esparguete (/kg) | [**0,99 €**](https://www.continente.pt/produto/massa-esparguete-pack-poupanca-continente-5253941.html) | [**0,99 €**](https://www.pingodoce.pt/home/produtos/as-nossas-marcas/pingo-doce/massa-esparguete-pack-poupanca-pingo-doce-895467.html) | [**0,99 €**](https://www.auchan.pt/pt/alimentacao/mercearia/arroz-e-massa/esparguete-aletria-e-meadas/esparguete-auchan-1kg/3771753.html) | = 0,0% |
 | Açúcar branco (/kg) | [0,85 €](https://www.continente.pt/produto/acucar-branco-pack-poupanca-continente-8037045.html) | [**0,80 €** 🏷](https://www.pingodoce.pt/home/produtos/mercearia/farinha-fermento-e-acucar/acucar-e-adocante/acucar-branco-granulado-pingo-doce-643460.html) | [0,89 €](https://www.auchan.pt/pt/alimentacao/mercearia/acucar-e-adocante/acucar/acucar-auchan-branco-granulado-1kg/4002491.html) | = 0,0% |
 | Farinha de trigo (/kg) | [**0,72 €**](https://www.continente.pt/produto/farinha-de-trigo-t65-sem-fermento-pack-poupanca-continente-7557692.html) | [0,79 €](https://www.pingodoce.pt/home/produtos/mercearia/farinha-fermento-e-acucar/farinha-fermento-e-pao-ralado/farinha-de-trigo-tipo-65-sem-fermento-perola-726416.html) | [1,60 €](https://www.auchan.pt/pt/alimentacao/mercearia/farinha/farinha-trigo/farinha-de-trigo-tipo-65-espiga--5kg/770523.html) | = 0,0% |
-| Azeite virgem extra (/L) | [**4,66 €** 🏷](https://www.continente.pt/produto/azeite-virgem-extra-continente-6028467.html) | [4,83 € 🏷](https://www.pingodoce.pt/home/produtos/mercearia/azeite-oleo-e-vinagre/azeite/azeite-virgem-extra-nossas-planicies-pingo-doce-705656.html) | [4,75 €](https://www.auchan.pt/pt/alimentacao/mercearia/azeite-oleo-e-vinagre/azeite-virgem-e-extra-virgem/azeite-oliveira-da-serra-virgem-extra-classico-2l/551704.html) | = 0,0% |
+| Azeite virgem extra (/L) | [**4,66 €** 🏷](https://www.continente.pt/produto/azeite-virgem-extra-continente-6028467.html) | [**4,66 €** 🏷](https://www.pingodoce.pt/home/produtos/mercearia/azeite-oleo-e-vinagre/azeite/azeite-virgem-extra-especial-oliveira-da-serra-906654.html) | [4,75 €](https://www.auchan.pt/pt/alimentacao/mercearia/azeite-oleo-e-vinagre/azeite-virgem-e-extra-virgem/azeite-oliveira-da-serra-virgem-extra-classico-2l/551704.html) | = 0,0% |
 | Óleo alimentar (/L) | [**1,45 €** 🏷](https://www.continente.pt/produto/oleo-alimentar-frigi-8965670.html) | [1,55 € 🏷](https://www.pingodoce.pt/home/produtos/mercearia/azeite-oleo-e-vinagre/oleo/oleo-alimentar-apetite-703571.html) | [1,55 €](https://www.auchan.pt/pt/alimentacao/mercearia/azeite-oleo-e-vinagre/oleo-girassol-amendoim-e-vegetal/oleo-alimentar-frigi--1l/5852.html) | = 0,0% |
 | Manteiga com sal (/kg) | [**7,96 €**](https://www.continente.pt/produto/manteiga-com-sal-continente-8696605.html) | [**7,96 €**](https://www.pingodoce.pt/home/produtos/manteiga-margarina-e-natas/manteiga-e-margarina/manteiga-com-sal-pingo-doce-893201.html) | [**7,96 €** 🏷](https://www.auchan.pt/pt/alimentacao/produtos-lacteos/manteiga-cremes-e-margarina/manteiga/manteiga-gresso-com-sal-250g/358612.html) | = 0,0% |
 | Frango inteiro (/kg) | [**2,49 €**](https://www.continente.pt/produto/frango-inteiro-com-miudos-continente-8780471.html) | [**2,49 €**](https://www.pingodoce.pt/home/produtos/talho/aves/frango/frango-inteiro-com-miudos-nosso-talho-378378.html) | [**2,49 €**](https://www.auchan.pt/pt/produtos-frescos/talho/frango-e-galinha/frango-inteiro-com-miudos-em-saco-auchan-kg/2696374.html) | = 0,0% |
 | Carne de porco (lombo) (/kg) | [5,29 €](https://www.continente.pt/produto/lombo-de-porco-sem-osso-para-assar-continente-2525325.html) | [**4,99 €**](https://www.pingodoce.pt/home/produtos/talho/porco/lombo-de-porco-embalado-nosso-talho-980664.html) | [**4,99 €**](https://www.auchan.pt/pt/produtos-frescos/talho/porco/porco-nacional-lombo--s-osso-kg/25666.html) | = 0,0% |
 | Carne de vaca picada (/kg) | [13,88 €](https://www.continente.pt/produto/preparado-de-carne-picada-de-bovino-continente-7430620.html) | [17,45 €](https://www.pingodoce.pt/home/produtos/talho/vitela-vitelao-e-bovino/angus/carne-picada-novilho-angus-pingo-doce-1001696.html) | [**12,21 €**](https://www.auchan.pt/pt/produtos-frescos/talho/hamburgueres-e-carne-picada/preparado-de-carne-picada-de-bovino-1kg/3667063.html) | = 0,0% |
-| Pescada congelada (/kg) | [**4,99 €** 🏷](https://www.continente.pt/produto/pescada-media-da-argentina-congelada-2182823.html) | [5,99 €](https://www.pingodoce.pt/home/produtos/peixaria/peixe/pescada/pescada-do-pacifico-a-granel-congelada-nossa-peixaria-976776.html) | [5,99 €](https://www.auchan.pt/pt/congelados/peixe/peixe-inteiro/pescada-congelada-argentina600900-kg/153443.html) | = 0,0% |
-| Bacalhau (/kg) | [**21,49 €**](https://www.continente.pt/produto/bacalhau-graudo-1-noruega-seco-2202534.html) | [21,99 €](https://www.pingodoce.pt/home/produtos/peixaria/bacalhau/bacalhau-salgado-seco/bacalhau-graudo-1%C2%AA-nossa-peixaria-350213.html) | [21,99 €](https://www.auchan.pt/pt/produtos-frescos/peixaria/bacalhau/bacalhau-graudo-noruega-kg/100949.html) | ▼ -2,3% |
+| Pescada congelada (/kg) | [4,99 € 🏷](https://www.continente.pt/produto/pescada-media-da-argentina-congelada-2182823.html) | [**3,99 €** 🏷](https://www.pingodoce.pt/home/produtos/peixaria/peixe/pescada/pescada-do-pacifico-a-granel-congelada-nossa-peixaria-976776.html) | [5,99 €](https://www.auchan.pt/pt/congelados/peixe/peixe-inteiro/pescada-congelada-argentina600900-kg/153443.html) | ▼ -20,0% |
+| Bacalhau (/kg) | [**21,49 €**](https://www.continente.pt/produto/bacalhau-graudo-1-noruega-seco-2202534.html) | [21,99 €](https://www.pingodoce.pt/home/produtos/peixaria/bacalhau/bacalhau-salgado-seco/bacalhau-graudo-1%C2%AA-nossa-peixaria-350213.html) | [21,99 €](https://www.auchan.pt/pt/produtos-frescos/peixaria/bacalhau/bacalhau-graudo-noruega-kg/100949.html) | = 0,0% |
 | Atum em óleo (/kg) | [**9,98 €**](https://www.continente.pt/produto/atum-posta-em-oleo-vegetal-continente-8061421.html) | [14,87 € 🏷](https://www.pingodoce.pt/home/produtos/mercearia/conservas/atum/atum-em-oleo-vegetal-ramirez-914809.html) | [12,36 €](https://www.auchan.pt/pt/alimentacao/mercearia/conservas/atum/atum-bingo-em-oleo-vegetal-110%2872%29g/3451648.html) | = 0,0% |
 | Batata (/kg) | [**1,12 €**](https://www.continente.pt/produto/batata-zero-desperdicio-continente-7706410.html) | [1,14 €](https://www.pingodoce.pt/home/produtos/frutas-e-vegetais/vegetais/batatas-cebolas-e-alhos/batata-vermelha-embalada-os-nossos-frescos-694770.html) | [**1,12 €**](https://www.auchan.pt/pt/produtos-frescos/legumes/batatas-alho-e-cebola/batata-auchan-5-kg/3483252.html) | = 0,0% |
 | Cebola (/kg) | [**1,00 €**](https://www.continente.pt/produto/cebola-zero-desperdicio-continente-3618608.html) | [1,25 €](https://www.pingodoce.pt/home/produtos/frutas-e-vegetais/vegetais/batatas-cebolas-e-alhos/cebola-embalada-os-nossos-frescos-906515.html) | [1,24 €](https://www.auchan.pt/pt/produtos-frescos/legumes/batatas-alho-e-cebola/cebola-auchan-2-kg/3653518.html) | = 0,0% |
@@ -53,13 +53,24 @@ Preços recolhidos diariamente em Continente, Pingo Doce, Auchan. 27 produtos; c
 
 | Produto | Loja | Ontem | Hoje | Var. |
 |---|---|---:|---:|---:|
-| Bacalhau — _Bacalhau Graúdo 1ª Noruega Seco (Quant. Mínima = 2,55 kg)_ | Continente | 21,99 € | 21,49 € | ▼ -2,3% |
+| Pescada congelada — _Pescada do Pacífico a Granel Congelada Nossa Peixaria (0.8 Kg)_ | Pingo Doce | 5,99 € | 3,99 € | ▼ -33,4% |
+| Azeite virgem extra — _Azeite Virgem Extra Especial Oliveira da Serra (3 L)_ | Pingo Doce | 4,83 € | 4,66 € | ▼ -3,5% |
 
 ## Verificação automática
 
-Verificação da recolha de **2026-11-27** (cobertura 81/81 = 100%), comparada com **2026-11-26**.
+Verificação da recolha de **2026-11-28** (cobertura 81/81 = 100%), comparada com **2026-11-27**.
 
-✅ Sem problemas.
+### ⚠️ Variações suspeitas (mais de 30%)
+
+| Produto | Loja | Antes | Agora | Var. | Produto escolhido |
+|---|---|---:|---:|---:|---|
+| Pescada congelada | Pingo Doce | 5,99 €/kg | 3,99 €/kg | -33% | Pescada do Pacífico a Granel Congelada Nossa Peixaria (0.8 Kg) ([ver](https://www.pingodoce.pt/home/produtos/peixaria/peixe/pescada/pescada-do-pacifico-a-granel-congelada-nossa-peixaria-976776.html)) |
+
+Uma variação grande é quase sempre uma troca de produto ou um erro de leitura. Confirme no link; se o produto escolhido não for o pretendido, ajuste `incluir`/`excluir` ou fixe o produto com `fixo` em `cabaz.toml`.
+
+### 🔄 Trocas de produto (sem variação suspeita)
+
+- **Azeite virgem extra** @ Pingo Doce: Azeite Virgem Extra Nossas Planicies Pingo Doce (3 L) → Azeite Virgem Extra Especial Oliveira da Serra (3 L) (4,83 € → 4,66 €/L, -4%)
 
 ---
-Histórico completo: [`data/precos.csv`](data/precos.csv) · Gráfico interativo: [`docs/index.html`](docs/index.html) · 12 dia(s) registado(s).
+Histórico completo: [`data/precos.csv`](data/precos.csv) · Gráfico interativo: [`docs/index.html`](docs/index.html) · 13 dia(s) registado(s).
